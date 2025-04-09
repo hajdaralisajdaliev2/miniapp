@@ -2,15 +2,11 @@
 const tg = window.Telegram.WebApp;
 tg.ready();
 
-// Получаем данные пользователя
-const user = tg.initDataUnsafe.user;
-const userId = user ? user.id : null;
-
-// Функция для отправки запроса к боту
-function sendRequest(action, data = {}) {
-    data.action = action;
-    data.user_id = userId;
-    tg.sendData(JSON.stringify(data));
+// Проверка загрузки Telegram Web App API
+if (!window.Telegram || !window.Telegram.WebApp) {
+    console.error("Telegram Web App API не загружен");
+} else {
+    console.log("Telegram Web App API успешно загружен");
 }
 
 // Функция для отображения контента
@@ -79,16 +75,7 @@ function showComposeMenuForm() {
         const dietType = document.getElementById('dietType').value;
         const period = document.getElementById('period').value;
 
-        sendRequest('compose_menu', {
-            height,
-            weight,
-            age,
-            activity,
-            goal,
-            goal_level: goalLevel,
-            diet_type: dietType,
-            period
-        });
+        displayContent(`Рост: ${height} см<br>Вес: ${weight} кг<br>Возраст: ${age}<br>Активность: ${activity}<br>Цель: ${goal}<br>Уровень цели: ${goalLevel}<br>Тип питания: ${dietType}<br>Период: ${period}`);
     });
 
     toggleGoalLevel();
@@ -109,7 +96,7 @@ function toggleGoalLevel() {
 
 // Обработчики кнопок
 function showDishes() {
-    sendRequest('dishes');
+    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будут отображаться блюда.</p>');
 }
 
 function composeMenu() {
@@ -117,41 +104,31 @@ function composeMenu() {
 }
 
 function showShoppingList() {
-    sendRequest('shopping_list');
+    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будет отображаться список покупок.</p>');
 }
 
 function showSettings() {
-    sendRequest('settings');
+    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будут отображаться настройки.</p>');
 }
 
 function showStatistics() {
-    sendRequest('statistics');
+    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будет отображаться статистика.</p>');
 }
 
 function searchRecipes() {
     const keyword = prompt('Введи ключевое слово для поиска рецепта (например, "курица" или "гречка"):');
     if (keyword) {
-        sendRequest('search_recipes', { keyword });
+        displayContent(`<div class="placeholder">Placeholder</div><p>Поиск рецептов по ключевому слову: ${keyword}</p>`);
     }
 }
 
 function exportList() {
-    sendRequest('export_list');
+    displayContent('<div class="placeholder">Placeholder</div><p>Экспорт списка покупок...</p>');
 }
 
 function showHistory() {
-    sendRequest('history');
+    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будет отображаться история.</p>');
 }
 
-// Обработка ответа от бота
-tg.onEvent('web_app_data', (data) => {
-    const response = JSON.parse(data);
-    if (response.error) {
-        displayContent(`Ошибка: ${response.error}`);
-    } else {
-        displayContent(response.message);
-    }
-});
-
 // Инициализация приложения
-displayContent('Выбери действие из меню выше.');
+displayContent('<div class="placeholder">Placeholder</div><p>Выбери действие из меню ниже.</p>');
