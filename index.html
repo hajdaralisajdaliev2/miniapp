@@ -3,147 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Диета и Рецепты</title>
+    <title>Приложение для здорового питания</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="dark-theme">
-    <!-- Onboarding -->
-    <div id="onboarding" class="onboarding">
-        <div class="onboarding-slide active" data-slide="1">
-            <h2>Привет!</h2>
-            <p>Давай подберём твой идеальный рацион.</p>
-            <button onclick="showSlide(2)">Далее</button>
-        </div>
-        <div class="onboarding-slide" data-slide="2">
-            <h2>Расскажи о себе</h2>
-            <form id="onboarding-form">
-                <label>Рост (см, 50-250):</label>
-                <input type="number" id="height" min="50" max="250" required>
-                <label>Вес (кг, 30-300):</label>
-                <input type="number" id="weight" min="30" max="300" required>
-                <label>Цель:</label>
-                <select id="goal" required>
-                    <option value="Массонабор">Массонабор</option>
-                    <option value="Похудение">Похудение</option>
-                    <option value="Поддержание">Поддержание</option>
-                </select>
-                <label>Аллергии:</label>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="allergy" value="Глютен"> Глютен</label>
-                    <label><input type="checkbox" name="allergy" value="Молоко"> Молоко</label>
-                    <label><input type="checkbox" name="allergy" value="Орехи"> Орехи</label>
-                </div>
-                <button type="submit">Далее</button>
-            </form>
-        </div>
-        <div class="onboarding-slide" data-slide="3">
-            <h2>Готово!</h2>
-            <p>Теперь мы подберём рацион специально для тебя.</p>
-            <button onclick="completeOnboarding()">Начать</button>
-        </div>
-        <div class="onboarding-dots">
-            <span class="dot active" data-dot="1"></span>
-            <span class="dot" data-dot="2"></span>
-            <span class="dot" data-dot="3"></span>
-        </div>
+<body>
+    <!-- Онбординг -->
+    <div id="onboarding">
+        <h2>Добро пожаловать!</h2>
+        <form id="onboarding-form">
+            <label for="height">Рост (см):</label>
+            <input type="number" id="height" required>
+            
+            <label for="weight">Вес (кг):</label>
+            <input type="number" id="weight" required>
+            
+            <label for="goal">Цель:</label>
+            <select id="goal" required>
+                <option value="похудение">Похудение</option>
+                <option value="поддержание">Поддержание</option>
+                <option value="массонабор">Массонабор</option>
+            </select>
+            
+            <label for="allergies">Аллергии:</label>
+            <select id="allergies" multiple>
+                <option value="Яйца">Яйца</option>
+                <option value="Молоко">Молоко</option>
+                <option value="Орехи">Орехи</option>
+                <option value="Глютен">Глютен</option>
+                <option value="Рыба">Рыба</option>
+                <option value="Морепродукты">Морепродукты</option>
+                <option value="Соя">Соя</option>
+            </select>
+            
+            <button type="submit">Начать</button>
+        </form>
     </div>
 
-    <!-- Главный экран -->
-    <div id="main-app" class="container hidden">
-        <!-- Переключатель тем -->
-        <div class="theme-toggle">
-            <button id="theme-toggle-btn" onclick="toggleTheme()">☀️</button>
-        </div>
-
-        <!-- Геймификация: баллы и достижения -->
-        <div class="gamification">
-            <div class="points">
-                <span>Баллы: <span id="user-points">0</span></span>
-            </div>
-            <div class="achievements">
-                <span>Достижения: <span id="user-achievements">0/5</span></span>
-            </div>
-        </div>
-
-        <!-- Вкладки -->
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('today')">Сегодня</button>
-            <button class="tab" onclick="showTab('recipes')">Рецепты</button>
-            <button class="tab" onclick="showTab('progress')">Прогресс</button>
-        </div>
+    <!-- Основное приложение -->
+    <div id="app" style="display: none;">
+        <nav>
+            <button id="today-btn" class="active">Сегодня</button>
+            <button id="progress-btn">Прогресс</button>
+            <button id="achievements-btn">Достижения</button>
+            <button id="settings-btn">Настройки</button>
+        </nav>
 
         <!-- Вкладка "Сегодня" -->
-        <div id="today" class="tab-content active">
-            <h2>Сегодня</h2>
-            <div class="stats">
-                <div class="stat-card">
-                    <h3>Калории</h3>
-                    <p id="calories">0 / 2000 ккал</p>
-                </div>
-                <div class="stat-card">
-                    <h3>БЖУ</h3>
-                    <p id="macros">Б: 0г Ж: 0г У: 0г</p>
-                </div>
-            </div>
-            <h3>Список блюд</h3>
-            <div class="meal-list">
-                <div class="meal-card">
-                    <div class="placeholder">Placeholder</div>
-                    <p>Завтрак: Овсянка с ягодами</p>
-                    <button onclick="markMealCompleted(this)">Съел</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Вкладка "Рецепты" -->
-        <div id="recipes" class="tab-content">
-            <h2>Рецепты</h2>
-            <div class="recipe-card">
-                <div class="placeholder">Placeholder</div>
-                <h3>Куриный суп</h3>
-                <p>Шаг 1: Нарежь овощи.<br>Шаг 2: Свари бульон.</p>
-                <button onclick="showRecipeDetails()">Подробнее</button>
-            </div>
-            <button onclick="addRecipe()">Добавить свой рецепт</button>
+        <div id="today-tab">
+            <div id="menu-list"></div>
         </div>
 
         <!-- Вкладка "Прогресс" -->
-        <div id="progress" class="tab-content">
-            <h2>Прогресс</h2>
-            <div class="progress-card">
-                <h3>Вес</h3>
-                <canvas id="weight-chart"></canvas>
-            </div>
-            <div class="progress-card">
-                <h3>Вода</h3>
-                <p id="water">0 / 2 л</p>
-                <button onclick="addWater()">Добавить стакан</button>
-            </div>
-            <div class="progress-card">
-                <h3>Шаги</h3>
-                <p id="steps">0 / 10000</p>
-            </div>
+        <div id="progress-tab">
+            <h3>Вода</h3>
+            <p>Выпито: <span id="water-intake">0</span> мл</p>
+            <button id="add-water-btn">Добавить 200 мл</button>
+
+            <h3>Шаги</h3>
+            <p>Пройдено: <span id="steps-count">0</span> шагов</p>
+            <button id="add-steps-btn">Добавить 1000 шагов</button>
+
+            <h3>График веса</h3>
+            <canvas id="weight-chart"></canvas>
         </div>
 
-        <!-- Навигационная панель -->
-        <nav class="bottom-nav">
-            <button onclick="showTab('today')">
-                <span class="icon">📅</span>
-                <span>Сегодня</span>
-            </button>
-            <button onclick="showTab('recipes')">
-                <span class="icon">📖</span>
-                <span>Рецепты</span>
-            </button>
-            <button onclick="showTab('progress')">
-                <span class="icon">📊</span>
-                <span>Прогресс</span>
-            </button>
-        </nav>
+        <!-- Вкладка "Достижения" -->
+        <div id="achievements-tab">
+            <h3>Ваши достижения</h3>
+            <ul id="achievements-list"></ul>
+        </div>
+
+        <!-- Вкладка "Настройки" -->
+        <div id="settings-tab">
+            <h3>Настройки</h3>
+            <p>Здесь будут настройки...</p>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
