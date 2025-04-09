@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Диета и Рецепты</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <div class="theme-toggle">
+        <label for="theme-switch">Тёмная тема</label>
+        <input type="checkbox" id="theme-switch">
+    </div>
     <div class="container">
         <h1>Диета и Рецепты</h1>
         <div class="menu">
             <button onclick="showDishes()">📖 Блюда</button>
-            <button onclick="composeMenu()">🍽 Диеты</button>
+            <button onclick="showComposeMenuForm()">🍽 Диеты</button>
             <button onclick="showShoppingList()">🛒 Список покупок</button>
             <button onclick="showSettings()">⚙ Настройки</button>
             <button onclick="showStatistics()">📊 Статистика</button>
@@ -23,5 +27,20 @@
         <div id="content"></div>
     </div>
     <script src="script.js"></script>
+    <script>
+        // Переключение темы
+        const themeSwitch = document.getElementById('theme-switch');
+        themeSwitch.addEventListener('change', () => {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('theme', themeSwitch.checked ? 'dark' : 'light');
+        });
+
+        // Загрузка сохранённой темы
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark');
+            themeSwitch.checked = true;
+        }
+    </script>
 </body>
 </html>
