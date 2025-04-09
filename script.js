@@ -9,126 +9,170 @@ if (!window.Telegram || !window.Telegram.WebApp) {
     console.log("Telegram Web App API успешно загружен");
 }
 
-// Функция для отображения контента
-function displayContent(content) {
-    document.getElementById('content').innerHTML = content.replace(/\n/g, '<br>');
+// Глобальные переменные
+let userData = {
+    height: 0,
+    weight: 0,
+    goal: '',
+    allergies: [],
+    points: 0,
+    achievements: [],
+    water: 0,
+    steps: 0,
+    weightHistory: [70] // Пример данных для графика
+};
+
+// Onboarding
+const onboarding = document.getElementById('onboarding');
+const mainApp = document.getElementById('main-app');
+const onboardingForm = document.getElementById('onboarding-form');
+
+if (!localStorage.getItem('onboardingCompleted')) {
+    onboarding.classList.remove('hidden');
+} else {
+    mainApp.classList.remove('hidden');
 }
 
-// Форма для составления меню
-function showComposeMenuForm() {
-    const form = `
-        <h2>Составление меню</h2>
-        <form id="composeMenuForm">
-            <label>Рост (см, 50-250):</label><br>
-            <input type="number" id="height" min="50" max="250" required><br>
-            <label>Вес (кг, 30-300):</label><br>
-            <input type="number" id="weight" min="30" max="300" required><br>
-            <label>Возраст (10-120):</label><br>
-            <input type="number" id="age" min="10" max="120" required><br>
-            <label>Уровень активности:</label><br>
-            <select id="activity" required>
-                <option value="Низкий">Низкий</option>
-                <option value="Средний">Средний</option>
-                <option value="Высокий">Высокий</option>
-            </select><br>
-            <label>Цель:</label><br>
-            <select id="goal" required onchange="toggleGoalLevel()">
-                <option value="Массонабор">Массонабор</option>
-                <option value="Похудение">Похудение</option>
-                <option value="Поддержание">Поддержание</option>
-            </select><br>
-            <div id="goalLevelDiv">
-                <label>Уровень цели:</label><br>
-                <select id="goalLevel" required>
-                    <option value="Лёгкий">Лёгкий</option>
-                    <option value="Средний">Средний</option>
-                    <option value="Тяжёлый">Тяжёлый</option>
-                </select><br>
-            </div>
-            <label>Тип питания:</label><br>
-            <select id="dietType" required>
-                <option value="С мясом">С мясом</option>
-                <option value="С рыбой">С рыбой</option>
-                <option value="Вегетарианское">Вегетарианское</option>
-                <option value="Сбалансированное">Сбалансированное</option>
-            </select><br>
-            <label>Период:</label><br>
-            <select id="period" required>
-                <option value="День">День</option>
-                <option value="Неделя">Неделя</option>
-                <option value="Месяц">Месяц</option>
-            </select><br>
-            <button type="submit">Составить меню</button>
-        </form>
-    `;
-    displayContent(form);
+onboardingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    userData.height = document.getElementById('height').value;
+    userData.weight = document.getElementById('weight').value;
+    userData.goal = document.getElementById('goal').value;
+    userData.allergies = Array.from(document.querySelectorAll('input[name="allergy"]:checked')).map(input => input.value);
 
-    // Обработчик отправки формы
-    document.getElementById('composeMenuForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const height = document.getElementById('height').value;
-        const weight = document.getElementById('weight').value;
-        const age = document.getElementById('age').value;
-        const activity = document.getElementById('activity').value;
-        const goal = document.getElementById('goal').value;
-        const goalLevel = goal === "Поддержание" ? "Нет" : document.getElementById('goalLevel').value;
-        const dietType = document.getElementById('dietType').value;
-        const period = document.getElementById('period').value;
+    // Переход к следующему слайду
+    showSlide(3);
+});
 
-        displayContent(`Рост: ${height} см<br>Вес: ${weight} кг<br>Возраст: ${age}<br>Активность: ${activity}<br>Цель: ${goal}<br>Уровень цели: ${goalLevel}<br>Тип питания: ${dietType}<br>Период: ${period}`);
-    });
-
-    toggleGoalLevel();
+function showSlide(slideNumber) {
+    document.querySelectorAll('.onboarding-slide').forEach(slide => slide.classList.remove('active'));
+    document.querySelectorAll('.onboarding-dots .dot').forEach(dot => dot.classList.remove('active'));
+    document.querySelector(`.onboarding-slide[data-slide="${slideNumber}"]`).classList.add('active');
+    document.querySelector(`.onboarding-dots .dot[data-dot="${slideNumber}"]`).classList.add('active');
 }
 
-// Показ/скрытие уровня цели
-function toggleGoalLevel() {
-    const goal = document.getElementById('goal').value;
-    const goalLevelDiv = document.getElementById('goalLevelDiv');
-    if (goal === "Поддержание") {
-        goalLevelDiv.style.display = 'none';
-        document.getElementById('goalLevel').removeAttribute('required');
+function completeOnboarding() {
+    localStorage.setItem('onboardingCompleted', 'true');
+    onboarding.classList.add('hidden');
+    mainApp.classList.remove('hidden');
+    calculateCalories();
+}
+
+// Переключение тем
+function toggleTheme() {
+    const body = document.body;
+    if (body.classList.contains('dark-theme')) {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        document.getElementById('theme-toggle-btn').textContent = '🌙';
     } else {
-        goalLevelDiv.style.display = 'block';
-        document.getElementById('goalLevel').setAttribute('required', 'required');
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        document.getElementById('theme-toggle-btn').textContent = '☀️';
     }
 }
 
-// Обработчики кнопок
-function showDishes() {
-    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будут отображаться блюда.</p>');
+// Переключение вкладок
+function showTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
 }
 
-function composeMenu() {
-    showComposeMenuForm();
+// Геймификация
+function addPoints(points) {
+    userData.points += points;
+    document.getElementById('user-points').textContent = userData.points;
+    checkAchievements();
 }
 
-function showShoppingList() {
-    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будет отображаться список покупок.</p>');
+function checkAchievements() {
+    if (userData.points >= 50 && !userData.achievements.includes('50_points')) {
+        userData.achievements.push('50_points');
+        tg.showAlert('Достижение разблокировано: 50 баллов!');
+    }
+    document.getElementById('user-achievements').textContent = `${userData.achievements.length}/5`;
 }
 
-function showSettings() {
-    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будут отображаться настройки.</p>');
+function markMealCompleted(button) {
+    button.disabled = true;
+    button.textContent = 'Съедено';
+    addPoints(10);
 }
 
-function showStatistics() {
-    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будет отображаться статистика.</p>');
+// Расчёт калорий (формула Миффлина-Сан Жеора)
+function calculateCalories() {
+    const weight = parseFloat(userData.weight);
+    const height = parseFloat(userData.height);
+    const age = 30; // Пример возраста, можно добавить в onboarding
+    const bmr = 10 * weight + 6.25 * height - 5 * age + 5; // Для мужчин
+    const dailyCalories = bmr * 1.2; // Уровень активности: низкий
+    document.getElementById('calories').textContent = `0 / ${Math.round(dailyCalories)} ккал`;
+    // Здесь можно добавить расчёт БЖУ
+    document.getElementById('macros').textContent = `Б: ${Math.round(dailyCalories * 0.3 / 4)}г Ж: ${Math.round(dailyCalories * 0.3 / 9)}г У: ${Math.round(dailyCalories * 0.4 / 4)}г`;
 }
 
-function searchRecipes() {
-    const keyword = prompt('Введи ключевое слово для поиска рецепта (например, "курица" или "гречка"):');
-    if (keyword) {
-        displayContent(`<div class="placeholder">Placeholder</div><p>Поиск рецептов по ключевому слову: ${keyword}</p>`);
+// Рецепты
+function showRecipeDetails() {
+    document.getElementById('recipes').innerHTML = `
+        <h2>Куриный суп</h2>
+        <div class="placeholder">Placeholder (видео)</div>
+        <p>Шаг 1: Нарежь овощи.<br>Шаг 2: Свари бульон.<br>Шаг 3: Добавь курицу.</p>
+        <button onclick="showTab('recipes')">Назад</button>
+    `;
+}
+
+function addRecipe() {
+    const recipeName = prompt('Название рецепта:');
+    const recipeSteps = prompt('Шаги приготовления (разделяй переносом строки):');
+    if (recipeName && recipeSteps) {
+        const recipeCard = document.createElement('div');
+        recipeCard.className = 'recipe-card';
+        recipeCard.innerHTML = `
+            <div class="placeholder">Placeholder</div>
+            <h3>${recipeName}</h3>
+            <p>${recipeSteps.replace(/\n/g, '<br>')}</p>
+            <button onclick="showRecipeDetails()">Подробнее</button>
+        `;
+        document.getElementById('recipes').prepend(recipeCard);
     }
 }
 
-function exportList() {
-    displayContent('<div class="placeholder">Placeholder</div><p>Экспорт списка покупок...</p>');
+// Прогресс
+function addWater() {
+    userData.water += 0.25; // 250 мл за стакан
+    document.getElementById('water').textContent = `${userData.water} / 2 л`;
+    if (userData.water >= 2 && !userData.achievements.includes('water_goal')) {
+        userData.achievements.push('water_goal');
+        tg.showAlert('Достижение разблокировано: Цель по воде выполнена!');
+        checkAchievements();
+    }
 }
 
-function showHistory() {
-    displayContent('<div class="placeholder">Placeholder</div><p>Здесь будет отображаться история.</p>');
-}
+// График веса
+const ctx = document.getElementById('weight-chart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['День 1', 'День 2', 'День 3'],
+        datasets: [{
+            label: 'Вес (кг)',
+            data: userData.weightHistory,
+            borderColor: '#007aff',
+            fill: false
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: false
+            }
+        }
+    }
+});
 
-// Инициализация приложения
-displayContent('<div class="placeholder">Placeholder</div><p>Выбери действие из меню ниже.</p>');
+// Инициализация
+if (localStorage.getItem('onboardingCompleted')) {
+    calculateCalories();
+}
