@@ -4,43 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Диета и Рецепты</title>
-    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="theme-toggle">
-        <label for="theme-switch">Тёмная тема</label>
-        <input type="checkbox" id="theme-switch">
-    </div>
     <div class="container">
         <h1>Диета и Рецепты</h1>
-        <div class="menu">
-            <button onclick="showDishes()">📖 Блюда</button>
-            <button onclick="showComposeMenuForm()">🍽 Диеты</button>
-            <button onclick="showShoppingList()">🛒 Список покупок</button>
-            <button onclick="showSettings()">⚙ Настройки</button>
-            <button onclick="showStatistics()">📊 Статистика</button>
-            <button onclick="searchRecipes()">🔍 Поиск рецептов</button>
-            <button onclick="exportList()">📋 Экспорт списка</button>
-            <button onclick="showHistory()">📜 История</button>
+        <div id="content">
+            <div class="placeholder">Placeholder</div>
+            <p>Выбери действие из меню ниже.</p>
         </div>
-        <div id="content"></div>
     </div>
+    <nav class="bottom-nav">
+        <button onclick="showDishes()">
+            <span class="icon">📖</span>
+            <span>Блюда</span>
+        </button>
+        <button onclick="showComposeMenuForm()">
+            <span class="icon">🍽</span>
+            <span>Диеты</span>
+        </button>
+        <button onclick="showShoppingList()">
+            <span class="icon">🛒</span>
+            <span>Список покупок</span>
+        </button>
+        <button onclick="showSettings()">
+            <span class="icon">⚙</span>
+            <span>Настройки</span>
+        </button>
+        <button onclick="showStatistics()">
+            <span class="icon">📊</span>
+            <span>Статистика</span>
+        </button>
+        <button onclick="searchRecipes()">
+            <span class="icon">🔍</span>
+            <span>Поиск рецептов</span>
+        </button>
+        <button onclick="exportList()">
+            <span class="icon">📋</span>
+            <span>Экспорт списка</span>
+        </button>
+        <button onclick="showHistory()">
+            <span class="icon">📜</span>
+            <span>История</span>
+        </button>
+    </nav>
     <script src="script.js"></script>
-    <script>
-        // Переключение темы
-        const themeSwitch = document.getElementById('theme-switch');
-        themeSwitch.addEventListener('change', () => {
-            document.body.classList.toggle('dark');
-            localStorage.setItem('theme', themeSwitch.checked ? 'dark' : 'light');
-        });
-
-        // Загрузка сохранённой темы
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark');
-            themeSwitch.checked = true;
-        }
-    </script>
 </body>
 </html>
