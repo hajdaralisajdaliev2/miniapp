@@ -3,6 +3,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 0;
+    padding-bottom: 80px; /* Отступ для навигационной панели */
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -10,7 +11,7 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Тёмная тема */
+/* Тёмная тема (по умолчанию) */
 body.dark-theme {
     background-color: #1a1a1a;
     color: #ffffff;
@@ -137,10 +138,14 @@ body.light-theme {
 }
 
 #theme-toggle-btn {
-    background: none;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
+    padding: 8px;
     font-size: 24px;
     cursor: pointer;
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Геймификация */
@@ -284,6 +289,45 @@ body.light-theme {
     font-size: 16px;
     font-weight: 500;
     margin-bottom: 10px;
+}
+
+/* Навигационная панель */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-nav button {
+    background: none;
+    border: none;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #6e6e73;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.bottom-nav button .icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.bottom-nav button:hover,
+.bottom-nav button.active {
+    color: #007aff;
 }
 
 /* Скрытый элемент */
