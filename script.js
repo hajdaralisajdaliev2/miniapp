@@ -27,6 +27,9 @@ const onboarding = document.getElementById('onboarding');
 const mainApp = document.getElementById('main-app');
 const onboardingForm = document.getElementById('onboarding-form');
 
+// Сбросим localStorage для теста
+// localStorage.removeItem('onboardingCompleted');
+
 if (!localStorage.getItem('onboardingCompleted')) {
     onboarding.classList.remove('hidden');
 } else {
@@ -76,8 +79,10 @@ function toggleTheme() {
 function showTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.bottom-nav button').forEach(btn => btn.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
-    document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
+    document.querySelector(`.tabs button[onclick="showTab('${tabId}')"]`).classList.add('active');
+    document.querySelector(`.bottom-nav button[onclick="showTab('${tabId}')"]`).classList.add('active');
 }
 
 // Геймификация
@@ -91,6 +96,10 @@ function checkAchievements() {
     if (userData.points >= 50 && !userData.achievements.includes('50_points')) {
         userData.achievements.push('50_points');
         tg.showAlert('Достижение разблокировано: 50 баллов!');
+    }
+    if (userData.water >= 2 && !userData.achievements.includes('water_goal')) {
+        userData.achievements.push('water_goal');
+        tg.showAlert('Достижение разблокировано: Цель по воде выполнена!');
     }
     document.getElementById('user-achievements').textContent = `${userData.achievements.length}/5`;
 }
@@ -109,7 +118,6 @@ function calculateCalories() {
     const bmr = 10 * weight + 6.25 * height - 5 * age + 5; // Для мужчин
     const dailyCalories = bmr * 1.2; // Уровень активности: низкий
     document.getElementById('calories').textContent = `0 / ${Math.round(dailyCalories)} ккал`;
-    // Здесь можно добавить расчёт БЖУ
     document.getElementById('macros').textContent = `Б: ${Math.round(dailyCalories * 0.3 / 4)}г Ж: ${Math.round(dailyCalories * 0.3 / 9)}г У: ${Math.round(dailyCalories * 0.4 / 4)}г`;
 }
 
@@ -143,11 +151,7 @@ function addRecipe() {
 function addWater() {
     userData.water += 0.25; // 250 мл за стакан
     document.getElementById('water').textContent = `${userData.water} / 2 л`;
-    if (userData.water >= 2 && !userData.achievements.includes('water_goal')) {
-        userData.achievements.push('water_goal');
-        tg.showAlert('Достижение разблокировано: Цель по воде выполнена!');
-        checkAchievements();
-    }
+    checkAchievements();
 }
 
 // График веса
@@ -175,4 +179,5 @@ new Chart(ctx, {
 // Инициализация
 if (localStorage.getItem('onboardingCompleted')) {
     calculateCalories();
+    showTab('today');
 }
