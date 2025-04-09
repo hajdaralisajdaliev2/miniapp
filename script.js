@@ -1,28 +1,11 @@
-// Инициализация Telegram Web Apps
-const tg = window.Telegram.WebApp;
-tg.ready();
-
-// Проверка загрузки Telegram Web App API
-if (!window.Telegram || !window.Telegram.WebApp) {
-    console.error("Telegram Web App API не загружен");
-} else {
-    console.log("Telegram Web App API успешно загружен");
-}
+const tg = window.Telegram?.WebApp;
+tg?.ready();
 
 // Глобальные переменные
 let userData = {
-    height: 0,
-    weight: 0,
-    goal: '',
-    allergies: [],
-    points: 0,
-    achievements: [],
-    water: 0,
-    steps: 0,
-    weightHistory: [70], // Пример данных для графика
-    dailyCalories: 0,
-    dailyMacros: { protein: 0, fat: 0, carbs: 0 },
-    menu: []
+    height: 0, weight: 0, goal: '', allergies: [], points: 0,
+    achievements: [], water: 0, steps: 0, weightHistory: [70],
+    dailyCalories: 0, dailyMacros: { protein: 0, fat: 0, carbs: 0 }, menu: []
 };
 
 // Список блюд (вставляем массив dishes из предыдущего шага)
@@ -1094,54 +1077,47 @@ const dishes = [
 ];
 
 // Функция для расчёта дневной нормы калорий (по формуле Миффлина-Сан Жеора)
+// Сохранение и загрузка данных
+function saveUserData() { localStorage.setItem("userData", JSON.stringify(userData)); }
+function loadUserData() {
+    const savedData = localStorage.getItem("userData");
+    if (savedData) userData = JSON.parse(savedData);
+}
+
+// Расчёт дневной нормы калорий
 function calculateDailyCalories(height, weight, goal) {
-    // Базовый расчёт для мужчины (можно добавить пол в userData для точности)
-    const bmr = 10 * weight + 6.25 * height - 5 * 30 + 5; // Предполагаем возраст 30
-    let dailyCalories = bmr * 1.5; // Умножаем на коэффициент активности (средний уровень)
-
-    // Корректировка в зависимости от цели
-    if (goal === "похудение") {
-        dailyCalories -= 500; // Дефицит 500 ккал для похудения
-    } else if (goal === "массонабор") {
-        dailyCalories += 500; // Профицит 500 ккал для массонабора
-    }
-
+    const bmr = 10 * weight + 6.25 * height - 5 * 30 + 5;
+    let dailyCalories = bmr * 1.5;
+    if (goal === "похудение") dailyCalories -= 500;
+    else if (goal === "массонабор") dailyCalories += 500;
     return Math.round(dailyCalories);
 }
 
-// Функция для расчёта макронутриентов (примерное распределение: 30% белки, 30% жиры, 40% углеводы)
+// Расчёт макронутриентов
 function calculateMacros(calories) {
-    const protein = Math.round((calories * 0.3) / 4); // 1 г белка = 4 ккал
-    const fat = Math.round((calories * 0.3) / 9); // 1 г жира = 9 ккал
-    const carbs = Math.round((calories * 0.4) / 4); // 1 г углеводов = 4 ккал
-    return { protein, fat, carbs };
+    return {
+        protein: Math.round((calories * 0.3) / 4),
+        fat: Math.round((calories * 0.3) / 9),
+        carbs: Math.round((calories * 0.4) / 4)
+    };
 }
 
-// Функция для фильтрации блюд по аллергиям
+// Фильтрация блюд по аллергиям
 function filterDishesByAllergies(dishes, allergies) {
-    return dishes.filter(dish => {
-        return !dish.allergens.some(allergen => allergies.includes(allergen));
-    });
+    return dishes.filter(dish => !dish.allergens.some(allergen => allergies.includes(allergen)));
 }
 
-// Функция для составления меню на день
+// Генерация меню
 function generateDailyMenu(dailyCalories, dailyMacros, allergies) {
     const filteredDishes = filterDishesByAllergies(dishes, allergies);
     const mealTypes = ["завтрак", "перекус", "суп", "горячее", "салат", "ужин", "десерт", "напиток"];
-    let menu = [];
-    let totalCalories = 0;
-    let totalMacros = { protein: 0, fat: 0, carbs: 0 };
+    let menu = [], totalCalories = 0, totalMacros = { protein: 0, fat: 0, carbs: 0 };
 
-    // Для каждого типа приёма пищи выбираем одно блюдо
     mealTypes.forEach(mealType => {
         const availableDishes = filteredDishes.filter(dish => dish.mealType === mealType);
         if (availableDishes.length === 0) return;
-
-        // Выбираем случайное блюдо
         const dish = availableDishes[Math.floor(Math.random() * availableDishes.length)];
-
-        // Проверяем, чтобы не превысить дневную норму калорий
-        if (totalCalories + dish.calories <= dailyCalories * 1.1) { // Допускаем небольшой перебор
+        if (totalCalories + dish.calories <= dailyCalories * 1.1) {
             menu.push({ mealType, dish });
             totalCalories += dish.calories;
             totalMacros.protein += dish.protein;
@@ -1153,47 +1129,36 @@ function generateDailyMenu(dailyCalories, dailyMacros, allergies) {
     return { menu, totalCalories, totalMacros };
 }
 
-// Функция для отображения меню на вкладке "Сегодня"
+// Отображение меню
 function displayMenu() {
     const menuContainer = document.getElementById("menu-list");
-    menuContainer.innerHTML = ""; // Очищаем контейнер
+    menuContainer.innerHTML = "";
 
-    const dailyCalories = userData.dailyCalories;
-    const dailyMacros = userData.dailyMacros;
-    const allergies = userData.allergies;
+    const { menu, totalCalories, totalMacros } = generateDailyMenu(
+        userData.dailyCalories, userData.dailyMacros, userData.allergies
+    );
+    userData.menu = menu;
+    saveUserData();
 
-    const { menu, totalCalories, totalMacros } = generateDailyMenu(dailyCalories, dailyMacros, allergies);
-    userData.menu = menu; // Сохраняем меню в userData
-
-    // Отображаем общее количество калорий и макронутриентов
     const summary = document.createElement("div");
     summary.className = "menu-summary";
     summary.innerHTML = `
         <h3>Итого за день</h3>
-        <p>Калории: ${totalCalories} / ${dailyCalories} ккал</p>
-        <p>Белки: ${totalMacros.protein} / ${dailyMacros.protein} г</p>
-        <p>Жиры: ${totalMacros.fat} / ${dailyMacros.fat} г</p>
-        <p>Углеводы: ${totalMacros.carbs} / ${dailyMacros.carbs} г</p>
+        <p>Калории: ${totalCalories} / ${userData.dailyCalories} ккал</p>
+        <p>Белки: ${totalMacros.protein} / ${userData.dailyMacros.protein} г</p>
+        <p>Жиры: ${totalMacros.fat} / ${userData.dailyMacros.fat} г</p>
+        <p>Углеводы: ${totalMacros.carbs} / ${userData.dailyMacros.carbs} г</p>
     `;
     menuContainer.appendChild(summary);
 
-    // Отображаем каждое блюдо
+    const mealTypeNames = {
+        "завтрак": "Завтрак", "перекус": "Перекус", "суп": "Суп", "горячее": "Горячее",
+        "салат": "Салат", "ужин": "Ужин", "десерт": "Десерт", "напиток": "Напиток"
+    };
+
     menu.forEach(item => {
         const mealDiv = document.createElement("div");
         mealDiv.className = "menu-item";
-
-        // Переводим тип блюда на русский
-        const mealTypeNames = {
-            "завтрак": "Завтрак",
-            "перекус": "Перекус",
-            "суп": "Суп",
-            "горячее": "Горячее",
-            "салат": "Салат",
-            "ужин": "Ужин",
-            "десерт": "Десерт",
-            "напиток": "Напиток"
-        };
-
         mealDiv.innerHTML = `
             <h3>${mealTypeNames[item.mealType]}</h3>
             <div class="dish-card">
@@ -1211,7 +1176,6 @@ function displayMenu() {
         menuContainer.appendChild(mealDiv);
     });
 
-    // Добавляем обработчики событий для кнопок "Подробнее"
     document.querySelectorAll(".details-btn").forEach(button => {
         button.addEventListener("click", (e) => {
             const dish = JSON.parse(e.target.getAttribute("data-dish"));
@@ -1220,13 +1184,13 @@ function displayMenu() {
     });
 }
 
-// Функция для отображения деталей блюда в модальном окне
+// Отображение деталей блюда
 function showDishDetails(dish) {
     const modal = document.createElement("div");
     modal.className = "modal";
     modal.innerHTML = `
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
+            <span class="close-btn">×</span>
             <h2>${dish.name}</h2>
             <img src="${dish.image_url}" alt="${dish.name}" class="modal-image">
             <p><strong>Калории:</strong> ${dish.calories} ккал</p>
@@ -1242,53 +1206,46 @@ function showDishDetails(dish) {
     `;
     document.body.appendChild(modal);
 
-    // Закрытие модального окна
-    modal.querySelector(".close-btn").addEventListener("click", () => {
-        modal.remove();
-    });
-
-    // Закрытие при клике вне модального окна
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    });
+    modal.querySelector(".close-btn").addEventListener("click", () => modal.remove());
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.remove(); });
 }
 
-// Функция для отображения вкладки "Сегодня"
+// Переключение вкладок
 function showTodayTab() {
     document.getElementById("today-tab").style.display = "block";
     document.getElementById("progress-tab").style.display = "none";
     document.getElementById("achievements-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "none";
-
-    // Обновляем меню
+    document.getElementById("today-btn").classList.add("active");
+    document.getElementById("progress-btn").classList.remove("active");
+    document.getElementById("achievements-btn").classList.remove("active");
+    document.getElementById("settings-btn").classList.remove("active");
     displayMenu();
 }
 
-// Функция для отображения вкладки "Прогресс"
 function showProgressTab() {
     document.getElementById("today-tab").style.display = "none";
     document.getElementById("progress-tab").style.display = "block";
     document.getElementById("achievements-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "none";
-
-    // Обновляем данные прогресса
+    document.getElementById("today-btn").classList.remove("active");
+    document.getElementById("progress-btn").classList.add("active");
+    document.getElementById("achievements-btn").classList.remove("active");
+    document.getElementById("settings-btn").classList.remove("active");
     document.getElementById("water-intake").textContent = userData.water;
     document.getElementById("steps-count").textContent = userData.steps;
-
-    // Обновляем график веса
     updateWeightChart();
 }
 
-// Функция для отображения вкладки "Достижения"
 function showAchievementsTab() {
     document.getElementById("today-tab").style.display = "none";
     document.getElementById("progress-tab").style.display = "none";
     document.getElementById("achievements-tab").style.display = "block";
     document.getElementById("settings-tab").style.display = "none";
-
-    // Обновляем достижения
+    document.getElementById("today-btn").classList.remove("active");
+    document.getElementById("progress-btn").classList.remove("active");
+    document.getElementById("achievements-btn").classList.add("active");
+    document.getElementById("settings-btn").classList.remove("active");
     const achievementsList = document.getElementById("achievements-list");
     achievementsList.innerHTML = "";
     userData.achievements.forEach(achievement => {
@@ -1298,15 +1255,18 @@ function showAchievementsTab() {
     });
 }
 
-// Функция для отображения вкладки "Настройки"
 function showSettingsTab() {
     document.getElementById("today-tab").style.display = "none";
     document.getElementById("progress-tab").style.display = "none";
     document.getElementById("achievements-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "block";
+    document.getElementById("today-btn").classList.remove("active");
+    document.getElementById("progress-btn").classList.remove("active");
+    document.getElementById("achievements-btn").classList.remove("active");
+    document.getElementById("settings-btn").classList.add("active");
 }
 
-// Функция для обновления графика веса
+// Обновление графика веса
 function updateWeightChart() {
     const ctx = document.getElementById("weight-chart").getContext("2d");
     new Chart(ctx, {
@@ -1314,72 +1274,61 @@ function updateWeightChart() {
         data: {
             labels: userData.weightHistory.map((_, index) => `День ${index + 1}`),
             datasets: [{
-                label: "Вес (кг)",
-                data: userData.weightHistory,
-                borderColor: "rgba(75, 192, 192, 1)",
-                fill: false
+                label: "Вес (кг)", data: userData.weightHistory,
+                borderColor: "rgba(75, 192, 192, 1)", fill: false
             }]
         },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false
-                }
-            }
-        }
+        options: { scales: { y: { beginAtZero: false } } }
     });
 }
 
-// Обработчики событий для навигации
+// Обработчики событий
 document.getElementById("today-btn").addEventListener("click", showTodayTab);
 document.getElementById("progress-btn").addEventListener("click", showProgressTab);
 document.getElementById("achievements-btn").addEventListener("click", showAchievementsTab);
 document.getElementById("settings-btn").addEventListener("click", showSettingsTab);
 
-// Обработчик для добавления воды
 document.getElementById("add-water-btn").addEventListener("click", () => {
-    userData.water += 200; // Добавляем 200 мл
+    userData.water += 200;
     document.getElementById("water-intake").textContent = userData.water;
-    userData.points += 10; // Начисляем очки
+    userData.points += 10;
+    saveUserData();
 });
 
-// Обработчик для добавления шагов
 document.getElementById("add-steps-btn").addEventListener("click", () => {
-    userData.steps += 1000; // Добавляем 1000 шагов
+    userData.steps += 1000;
     document.getElementById("steps-count").textContent = userData.steps;
-    userData.points += 20; // Начисляем очки
-
-    // Проверяем достижение
+    userData.points += 20;
     if (userData.steps >= 10000 && !userData.achievements.includes("10 000 шагов")) {
         userData.achievements.push("10 000 шагов");
         alert("Поздравляем! Вы достигли 10 000 шагов!");
     }
+    saveUserData();
 });
 
-// Обработчик для формы онбординга
 document.getElementById("onboarding-form").addEventListener("submit", (e) => {
     e.preventDefault();
     userData.height = parseInt(document.getElementById("height").value);
     userData.weight = parseInt(document.getElementById("weight").value);
     userData.goal = document.getElementById("goal").value;
     userData.allergies = Array.from(document.getElementById("allergies").selectedOptions).map(option => option.value);
-
-    // Рассчитываем дневные нормы
     userData.dailyCalories = calculateDailyCalories(userData.height, userData.weight, userData.goal);
     userData.dailyMacros = calculateMacros(userData.dailyCalories);
-
-    // Скрываем онбординг и показываем основное приложение
     document.getElementById("onboarding").style.display = "none";
     document.getElementById("app").style.display = "block";
-
-    // Показываем вкладку "Сегодня" по умолчанию
+    saveUserData();
     showTodayTab();
 });
 
-// Инициализация приложения
+// Инициализация
 document.addEventListener("DOMContentLoaded", () => {
-    // Проверяем, есть ли данные пользователя (например, из localStorage)
-    // Если данных нет, показываем онбординг
-    document.getElementById("onboarding").style.display = "block";
-    document.getElementById("app").style.display = "none";
+    loadUserData();
+    if (userData.height && userData.weight) {
+        document.getElementById("onboarding").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        showTodayTab();
+    } else {
+        document.getElementById("onboarding").style.display = "block";
+        document.getElementById("app").style.display = "none";
+    }
 });
