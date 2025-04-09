@@ -1,14 +1,25 @@
+/* Общие стили */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #f5f5f7;
-    color: #1d1d1f;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     padding: 0;
-    padding-bottom: 80px; /* Отступ снизу для навигационной панели */
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Тёмная тема */
+body.dark-theme {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+/* Светлая тема */
+body.light-theme {
+    background-color: #f5f5f7;
+    color: #1d1d1f;
 }
 
 .container {
@@ -16,34 +27,255 @@ body {
     width: 100%;
     margin: 20px;
     padding: 20px;
-    background-color: #ffffff;
-    border-radius: 18px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-h1, h2 {
+/* Onboarding */
+.onboarding {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.onboarding-slide {
+    display: none;
     text-align: center;
-    color: #1d1d1f;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    max-width: 400px;
+    width: 90%;
+    animation: slideIn 0.5s ease;
+}
+
+.onboarding-slide.active {
+    display: block;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.onboarding-slide h2 {
     margin-bottom: 20px;
-    font-weight: 600;
-    font-size: 28px;
-    line-height: 1.2;
 }
 
-#content {
-    padding: 15px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    min-height: 200px;
-    color: #1d1d1f;
+.onboarding-slide p {
+    margin-bottom: 20px;
+}
+
+.onboarding-slide form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.onboarding-slide label {
+    font-weight: 500;
+}
+
+.onboarding-slide input,
+.onboarding-slide select {
+    padding: 10px;
     font-size: 16px;
-    line-height: 1.5;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
+.onboarding-slide .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.onboarding-slide button {
+    padding: 12px;
+    background: #007aff;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.onboarding-dots {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.onboarding-dots .dot {
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.onboarding-dots .dot.active {
+    background: #007aff;
+}
+
+/* Переключатель тем */
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#theme-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Геймификация */
+.gamification {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.points, .achievements {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Вкладки */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #6e6e73;
+}
+
+.tab.active {
+    color: #007aff;
+    border-bottom: 2px solid #007aff;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Вкладка "Сегодня" */
+.stats {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    text-align: center;
+}
+
+.meal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.meal-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.meal-card button {
+    background: #007aff;
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Вкладка "Рецепты" */
+.recipe-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    margin-bottom: 15px;
+}
+
+.recipe-card button {
+    background: #007aff;
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Вкладка "Прогресс" */
+.progress-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    margin-bottom: 15px;
+}
+
+.progress-card button {
+    background: #007aff;
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Заглушки */
 .placeholder {
     width: 100%;
-    height: 200px;
-    background-color: #e0e0e0;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 12px;
     display: flex;
     justify-content: center;
@@ -51,84 +283,10 @@ h1, h2 {
     color: #6e6e73;
     font-size: 16px;
     font-weight: 500;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #ffffff;
-    border-top: 1px solid #d2d2d7;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.bottom-nav button {
-    background: none;
-    border: none;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #6e6e73;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.bottom-nav button .icon {
-    font-size: 24px;
-    margin-bottom: 4px;
-}
-
-.bottom-nav button:hover,
-.bottom-nav button.active {
-    color: #007aff;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-label {
-    font-weight: 500;
-    color: #1d1d1f;
-}
-
-input, select {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #d2d2d7;
-    border-radius: 8px;
-    background-color: #f5f5f7;
-    color: #1d1d1f;
-    transition: border-color 0.3s ease;
-}
-
-input:focus, select:focus {
-    border-color: #007aff;
-    outline: none;
-}
-
-button[type="submit"] {
-    background-color: #007aff;
-    color: #ffffff;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: 500;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button[type="submit"]:hover {
-    background-color: #005bb5;
+/* Скрытый элемент */
+.hidden {
+    display: none;
 }
