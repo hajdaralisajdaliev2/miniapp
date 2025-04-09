@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диета и Рецепты</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Диета и Рецепты</h1>
+        <div class="menu">
+            <button onclick="showDishes()">📖 Блюда</button>
+            <button onclick="composeMenu()">🍽 Диеты</button>
+            <button onclick="showShoppingList()">🛒 Список покупок</button>
+            <button onclick="showSettings()">⚙ Настройки</button>
+            <button onclick="showStatistics()">📊 Статистика</button>
+            <button onclick="searchRecipes()">🔍 Поиск рецептов</button>
+            <button onclick="exportList()">📋 Экспорт списка</button>
+            <button onclick="showHistory()">📜 История</button>
+        </div>
+        <div id="content"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
