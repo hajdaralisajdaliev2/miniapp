@@ -14,17 +14,14 @@
         <form id="onboarding-form">
             <label for="height">Рост (см):</label>
             <input type="number" id="height" required>
-            
             <label for="weight">Вес (кг):</label>
             <input type="number" id="weight" required>
-            
             <label for="goal">Цель:</label>
             <select id="goal" required>
                 <option value="похудение">Похудение</option>
                 <option value="поддержание">Поддержание</option>
                 <option value="массонабор">Массонабор</option>
             </select>
-            
             <label for="allergies">Аллергии:</label>
             <select id="allergies" multiple>
                 <option value="Яйца">Яйца</option>
@@ -35,7 +32,6 @@
                 <option value="Морепродукты">Морепродукты</option>
                 <option value="Соя">Соя</option>
             </select>
-            
             <button type="submit">Начать</button>
         </form>
     </div>
@@ -48,33 +44,23 @@
             <button id="achievements-btn">Достижения</button>
             <button id="settings-btn">Настройки</button>
         </nav>
-
-        <!-- Вкладка "Сегодня" -->
         <div id="today-tab">
             <div id="menu-list"></div>
         </div>
-
-        <!-- Вкладка "Прогресс" -->
         <div id="progress-tab">
             <h3>Вода</h3>
             <p>Выпито: <span id="water-intake">0</span> мл</p>
             <button id="add-water-btn">Добавить 200 мл</button>
-
             <h3>Шаги</h3>
             <p>Пройдено: <span id="steps-count">0</span> шагов</p>
             <button id="add-steps-btn">Добавить 1000 шагов</button>
-
             <h3>График веса</h3>
             <canvas id="weight-chart"></canvas>
         </div>
-
-        <!-- Вкладка "Достижения" -->
         <div id="achievements-tab">
             <h3>Ваши достижения</h3>
             <ul id="achievements-list"></ul>
         </div>
-
-        <!-- Вкладка "Настройки" -->
         <div id="settings-tab">
             <h3>Настройки</h3>
             <p>Здесь будут настройки...</p>
