@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Приложение для здорового питания</title>
+    <title>Solaris Eubuleus</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Онбординг -->
-    <div id="onboarding">
-        <h2>Добро пожаловать!</h2>
-        <form id="onboarding-form">
+    <div id="onboarding" class="fade-in">
+        <h2>Добро пожаловать в Solaris Eubuleus!</h2>
+        <form id="onboarding-form" class="glow-form">
             <label for="height">Рост (см):</label>
             <input type="number" id="height" placeholder="Рост (см)" required>
             <label for="weight">Вес (кг):</label>
@@ -33,62 +34,63 @@
                 <option value="Морепродукты">Морепродукты</option>
                 <option value="Соя">Соя</option>
             </select>
-            <button type="submit">Начать</button>
+            <button type="submit" class="neon-btn">Начать путешествие</button>
         </form>
     </div>
 
     <!-- Основное приложение -->
     <div id="app" style="display: none;">
         <!-- Главное меню (Красный) -->
-        <div id="main-menu">
+        <div id="main-menu" class="fade-in">
+            <h1 class="cosmic-title">Solaris Eubuleus</h1>
             <div class="menu-buttons">
-                <button id="profile-btn" class="menu-btn">Профиль</button>
-                <button id="points-btn" class="menu-btn">Баллы</button>
-                <button id="weekly-menu-btn" class="menu-btn">Рацион</button>
-                <button id="settings-btn" class="menu-btn">Настройки</button>
-                <button id="stats-btn" class="menu-btn">Статистика</button>
+                <button id="profile-btn" class="menu-btn glow-btn">Профиль</button>
+                <button id="points-btn" class="menu-btn glow-btn">Баллы</button>
+                <button id="weekly-menu-btn" class="menu-btn glow-btn">Рацион</button>
+                <button id="settings-btn" class="menu-btn glow-btn">Настройки</button>
+                <button id="stats-btn" class="menu-btn glow-btn">Статистика</button>
             </div>
-            <button id="home-btn" class="create-btn">Создать звёзды</button>
+            <button id="home-btn" class="create-btn neon-btn">Создать звёзды</button>
         </div>
 
         <!-- Баллы (Синий) -->
-        <div id="points-tab" style="display: none;">
-            <button id="back-btn-points" class="back-btn">🏠</button>
-            <h2>Ваши баллы: <span id="points-count">0</span></h2>
+        <div id="points-tab" style="display: none;" class="fade-in">
+            <button id="back-btn-points" class="back-btn glow-btn">🏠</button>
+            <h2>Ваши звёздные баллы: <span id="points-count">0</span></h2>
             <h3>История начисления</h3>
-            <ul id="points-history"></ul>
+            <ul id="points-history" class="glow-list"></ul>
         </div>
 
         <!-- Профиль (Зелёный) -->
-        <div id="profile-tab" style="display: none;">
-            <button id="back-btn-profile" class="back-btn">🏠</button>
-            <h2>Ваш профиль</h2>
+        <div id="profile-tab" style="display: none;" class="fade-in">
+            <button id="back-btn-profile" class="back-btn glow-btn">🏠</button>
+            <h2>Ваш космический профиль</h2>
             <p>Рост: <span id="profile-height">0</span> см</p>
             <p>Вес: <span id="profile-weight">0</span> кг</p>
             <p>Цель: <span id="profile-goal"></span></p>
             <h3>Прогресс</h3>
             <p>Вода: <span id="water-intake">0</span> мл</p>
-            <button id="add-water-btn">Добавить 200 мл</button>
+            <button id="add-water-btn" class="neon-btn">Добавить 200 мл</button>
             <p>Шаги: <span id="steps-count">0</span> шагов</p>
-            <button id="add-steps-btn">Добавить 1000 шагов</button>
+            <button id="add-steps-btn" class="neon-btn">Добавить 1000 шагов</button>
             <h3>График веса</h3>
-            <canvas id="weight-chart"></canvas>
+            <canvas id="weight-chart" class="glow-chart"></canvas>
             <h3>Достижения</h3>
-            <ul id="achievements-list"></ul>
+            <ul id="achievements-list" class="glow-list"></ul>
         </div>
 
         <!-- Рацион на неделю (Фиолетовый) -->
-        <div id="weekly-menu-tab" style="display: none;">
-            <button id="back-btn-weekly" class="back-btn">🏠</button>
+        <div id="weekly-menu-tab" style="display: none;" class="fade-in">
+            <button id="back-btn-weekly" class="back-btn glow-btn">🏠</button>
             <h2>Рацион на неделю</h2>
-            <div id="weekly-menu-list"></div>
+            <div id="weekly-menu-list" class="glow-list"></div>
         </div>
 
         <!-- Настройки (Чёрный) -->
-        <div id="settings-tab" style="display: none;">
-            <button id="back-btn-settings" class="back-btn">🏠</button>
+        <div id="settings-tab" style="display: none;" class="fade-in">
+            <button id="back-btn-settings" class="back-btn glow-btn">🏠</button>
             <h2>Настройки</h2>
-            <form id="settings-form">
+            <form id="settings-form" class="glow-form">
                 <label for="settings-height">Рост (см):</label>
                 <input type="number" id="settings-height" placeholder="Рост (см)">
                 <label for="settings-weight">Вес (кг):</label>
@@ -110,13 +112,13 @@
                     <option value="Морепродукты">Морепродукты</option>
                     <option value="Соя">Соя</option>
                 </select>
-                <button type="submit">Сохранить</button>
+                <button type="submit" class="neon-btn">Сохранить</button>
             </form>
         </div>
 
         <!-- Статистика (Жёлтый) -->
-        <div id="stats-tab" style="display: none;">
-            <button id="back-btn-stats" class="back-btn">🏠</button>
+        <div id="stats-tab" style="display: none;" class="fade-in">
+            <button id="back-btn-stats" class="back-btn glow-btn">🏠</button>
             <h2>Статистика</h2>
             <p>Средние калории за неделю: <span id="avg-calories">0</span> ккал</p>
             <p>Средние шаги за неделю: <span id="avg-steps">0</span> шагов</p>
