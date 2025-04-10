@@ -5,7 +5,8 @@ tg?.ready();
 let userData = {
     height: 0, weight: 0, goal: '', allergies: [], points: 0,
     achievements: [], water: 0, steps: 0, weightHistory: [70],
-    dailyCalories: 0, dailyMacros: { protein: 0, fat: 0, carbs: 0 }, menu: []
+    dailyCalories: 0, dailyMacros: { protein: 0, fat: 0, carbs: 0 },
+    pointsHistory: [], weeklyMenu: [], stats: { calories: [], steps: [], water: [] }
 };
 
 // Список блюд (вставляем массив dishes из предыдущего шага)
@@ -1076,8 +1077,6 @@ const dishes = [
     }
 ];
 
-// Функция для расчёта дневной нормы калорий (по формуле Миффлина-Сан Жеора)
-// Сохранение и загрузка данных
 function saveUserData() { localStorage.setItem("userData", JSON.stringify(userData)); }
 function loadUserData() {
     const savedData = localStorage.getItem("userData");
@@ -1107,145 +1106,99 @@ function filterDishesByAllergies(dishes, allergies) {
     return dishes.filter(dish => !dish.allergens.some(allergen => allergies.includes(allergen)));
 }
 
-// Генерация меню
-function generateDailyMenu(dailyCalories, dailyMacros, allergies) {
+// Генерация рациона на неделю
+function generateWeeklyMenu(allergies) {
     const filteredDishes = filterDishesByAllergies(dishes, allergies);
     const mealTypes = ["завтрак", "перекус", "суп", "горячее", "салат", "ужин", "десерт", "напиток"];
-    let menu = [], totalCalories = 0, totalMacros = { protein: 0, fat: 0, carbs: 0 };
+    const days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+    let weeklyMenu = [];
 
-    mealTypes.forEach(mealType => {
-        const availableDishes = filteredDishes.filter(dish => dish.mealType === mealType);
-        if (availableDishes.length === 0) return;
-        const dish = availableDishes[Math.floor(Math.random() * availableDishes.length)];
-        if (totalCalories + dish.calories <= dailyCalories * 1.1) {
-            menu.push({ mealType, dish });
-            totalCalories += dish.calories;
-            totalMacros.protein += dish.protein;
-            totalMacros.fat += dish.fat;
-            totalMacros.carbs += dish.carbs;
-        }
+    days.forEach(day => {
+        let dailyMenu = [];
+        mealTypes.forEach(mealType => {
+            const availableDishes = filteredDishes.filter(dish => dish.mealType === mealType);
+            if (availableDishes.length === 0) return;
+            const dish = availableDishes[Math.floor(Math.random() * availableDishes.length)];
+            dailyMenu.push(dish);
+        });
+        weeklyMenu.push({ day, meals: dailyMenu });
     });
 
-    return { menu, totalCalories, totalMacros };
+    return weeklyMenu;
 }
 
-// Отображение меню
-function displayMenu() {
-    const menuContainer = document.getElementById("menu-list");
+// Отображение рациона на неделю
+function displayWeeklyMenu() {
+    const menuContainer = document.getElementById("weekly-menu-list");
     menuContainer.innerHTML = "";
 
-    const { menu, totalCalories, totalMacros } = generateDailyMenu(
-        userData.dailyCalories, userData.dailyMacros, userData.allergies
-    );
-    userData.menu = menu;
-    saveUserData();
-
-    const summary = document.createElement("div");
-    summary.className = "menu-summary";
-    summary.innerHTML = `
-        <h3>Итого за день</h3>
-        <p>Калории: ${totalCalories} / ${userData.dailyCalories} ккал</p>
-        <p>Белки: ${totalMacros.protein} / ${userData.dailyMacros.protein} г</p>
-        <p>Жиры: ${totalMacros.fat} / ${userData.dailyMacros.fat} г</p>
-        <p>Углеводы: ${totalMacros.carbs} / ${userData.dailyMacros.carbs} г</p>
-    `;
-    menuContainer.appendChild(summary);
-
-    const mealTypeNames = {
-        "завтрак": "Завтрак", "перекус": "Перекус", "суп": "Суп", "горячее": "Горячее",
-        "салат": "Салат", "ужин": "Ужин", "десерт": "Десерт", "напиток": "Напиток"
-    };
-
-    menu.forEach(item => {
-        const mealDiv = document.createElement("div");
-        mealDiv.className = "menu-item";
-        mealDiv.innerHTML = `
-            <h3>${mealTypeNames[item.mealType]}</h3>
-            <div class="dish-card">
-                <img src="${item.dish.image_url}" alt="${item.dish.name}" class="dish-image">
-                <div class="dish-info">
-                    <h4>${item.dish.name}</h4>
-                    <p>Калории: ${item.dish.calories} ккал</p>
-                    <p>Белки: ${item.dish.protein} г, Жиры: ${item.dish.fat} г, Углеводы: ${item.dish.carbs} г</p>
-                    <p>Ингредиенты: ${item.dish.ingredients}</p>
-                    <p>Цены: Пятёрочка: ${item.dish.prices["Пятёрочка"]} ₽, Магнит: ${item.dish.prices["Магнит"]} ₽, Лента: ${item.dish.prices["Лента"]} ₽</p>
-                    <button class="details-btn" data-dish='${JSON.stringify(item.dish)}'>Подробнее</button>
-                </div>
-            </div>
-        `;
-        menuContainer.appendChild(mealDiv);
-    });
-
-    document.querySelectorAll(".details-btn").forEach(button => {
-        button.addEventListener("click", (e) => {
-            const dish = JSON.parse(e.target.getAttribute("data-dish"));
-            showDishDetails(dish);
+    userData.weeklyMenu.forEach(day => {
+        const dayDiv = document.createElement("div");
+        dayDiv.className = "day-card";
+        dayDiv.innerHTML = `<h3>${day.day}</h3>`;
+        day.meals.forEach(dish => {
+            const dishDiv = document.createElement("div");
+            dishDiv.className = "dish-card";
+            dishDiv.innerHTML = `
+                <img src="${dish.image_url}" alt="${dish.name}">
+                <h4>${dish.name}</h4>
+            `;
+            dayDiv.appendChild(dishDiv);
         });
+        menuContainer.appendChild(dayDiv);
     });
 }
 
-// Отображение деталей блюда
-function showDishDetails(dish) {
-    const modal = document.createElement("div");
-    modal.className = "modal";
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-btn">×</span>
-            <h2>${dish.name}</h2>
-            <img src="${dish.image_url}" alt="${dish.name}" class="modal-image">
-            <p><strong>Калории:</strong> ${dish.calories} ккал</p>
-            <p><strong>Белки:</strong> ${dish.protein} г</p>
-            <p><strong>Жиры:</strong> ${dish.fat} г</p>
-            <p><strong>Углеводы:</strong> ${dish.carbs} г</p>
-            <p><strong>Вес:</strong> ${dish.weight} г</p>
-            <p><strong>Ингредиенты:</strong> ${dish.ingredients}</p>
-            <p><strong>Цены:</strong> Пятёрочка: ${dish.prices["Пятёрочка"]} ₽, Магнит: ${dish.prices["Магнит"]} ₽, Лента: ${dish.prices["Лента"]} ₽</p>
-            <p><strong>Рецепт:</strong></p>
-            <pre>${dish.recipe}</pre>
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    modal.querySelector(".close-btn").addEventListener("click", () => modal.remove());
-    modal.addEventListener("click", (e) => { if (e.target === modal) modal.remove(); });
+// Обновление статистики
+function updateStats() {
+    const avg = (arr) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : 0;
+    document.getElementById("avg-calories").textContent = avg(userData.stats.calories);
+    document.getElementById("avg-steps").textContent = avg(userData.stats.steps);
+    document.getElementById("avg-water").textContent = avg(userData.stats.water);
 }
 
-// Переключение вкладок
-function showTodayTab() {
-    document.getElementById("today-tab").style.display = "block";
-    document.getElementById("progress-tab").style.display = "none";
-    document.getElementById("achievements-tab").style.display = "none";
+// Переключение разделов
+function showMainMenu() {
+    document.getElementById("main-menu").style.display = "block";
+    document.getElementById("points-tab").style.display = "none";
+    document.getElementById("profile-tab").style.display = "none";
+    document.getElementById("weekly-menu-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "none";
-    document.getElementById("today-btn").classList.add("active");
-    document.getElementById("progress-btn").classList.remove("active");
-    document.getElementById("achievements-btn").classList.remove("active");
-    document.getElementById("settings-btn").classList.remove("active");
-    displayMenu();
+    document.getElementById("stats-tab").style.display = "none";
 }
 
-function showProgressTab() {
-    document.getElementById("today-tab").style.display = "none";
-    document.getElementById("progress-tab").style.display = "block";
-    document.getElementById("achievements-tab").style.display = "none";
+function showPointsTab() {
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("points-tab").style.display = "block";
+    document.getElementById("profile-tab").style.display = "none";
+    document.getElementById("weekly-menu-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "none";
-    document.getElementById("today-btn").classList.remove("active");
-    document.getElementById("progress-btn").classList.add("active");
-    document.getElementById("achievements-btn").classList.remove("active");
-    document.getElementById("settings-btn").classList.remove("active");
+    document.getElementById("stats-tab").style.display = "none";
+
+    document.getElementById("points-count").textContent = userData.points;
+    const historyList = document.getElementById("points-history");
+    historyList.innerHTML = "";
+    userData.pointsHistory.forEach(entry => {
+        const li = document.createElement("li");
+        li.textContent = entry;
+        historyList.appendChild(li);
+    });
+}
+
+function showProfileTab() {
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("points-tab").style.display = "none";
+    document.getElementById("profile-tab").style.display = "block";
+    document.getElementById("weekly-menu-tab").style.display = "none";
+    document.getElementById("settings-tab").style.display = "none";
+    document.getElementById("stats-tab").style.display = "none";
+
+    document.getElementById("profile-height").textContent = userData.height;
+    document.getElementById("profile-weight").textContent = userData.weight;
+    document.getElementById("profile-goal").textContent = userData.goal;
     document.getElementById("water-intake").textContent = userData.water;
     document.getElementById("steps-count").textContent = userData.steps;
-    updateWeightChart();
-}
 
-function showAchievementsTab() {
-    document.getElementById("today-tab").style.display = "none";
-    document.getElementById("progress-tab").style.display = "none";
-    document.getElementById("achievements-tab").style.display = "block";
-    document.getElementById("settings-tab").style.display = "none";
-    document.getElementById("today-btn").classList.remove("active");
-    document.getElementById("progress-btn").classList.remove("active");
-    document.getElementById("achievements-btn").classList.add("active");
-    document.getElementById("settings-btn").classList.remove("active");
     const achievementsList = document.getElementById("achievements-list");
     achievementsList.innerHTML = "";
     userData.achievements.forEach(achievement => {
@@ -1253,17 +1206,47 @@ function showAchievementsTab() {
         li.textContent = achievement;
         achievementsList.appendChild(li);
     });
+
+    updateWeightChart();
+}
+
+function showWeeklyMenuTab() {
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("points-tab").style.display = "none";
+    document.getElementById("profile-tab").style.display = "none";
+    document.getElementById("weekly-menu-tab").style.display = "block";
+    document.getElementById("settings-tab").style.display = "none";
+    document.getElementById("stats-tab").style.display = "none";
+
+    displayWeeklyMenu();
 }
 
 function showSettingsTab() {
-    document.getElementById("today-tab").style.display = "none";
-    document.getElementById("progress-tab").style.display = "none";
-    document.getElementById("achievements-tab").style.display = "none";
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("points-tab").style.display = "none";
+    document.getElementById("profile-tab").style.display = "none";
+    document.getElementById("weekly-menu-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "block";
-    document.getElementById("today-btn").classList.remove("active");
-    document.getElementById("progress-btn").classList.remove("active");
-    document.getElementById("achievements-btn").classList.remove("active");
-    document.getElementById("settings-btn").classList.add("active");
+    document.getElementById("stats-tab").style.display = "none";
+
+    document.getElementById("settings-height").value = userData.height;
+    document.getElementById("settings-weight").value = userData.weight;
+    document.getElementById("settings-goal").value = userData.goal;
+    const allergiesSelect = document.getElementById("settings-allergies");
+    Array.from(allergiesSelect.options).forEach(option => {
+        option.selected = userData.allergies.includes(option.value);
+    });
+}
+
+function showStatsTab() {
+    document.getElementById("main-menu").style.display = "none";
+    document.getElementById("points-tab").style.display = "none";
+    document.getElementById("profile-tab").style.display = "none";
+    document.getElementById("weekly-menu-tab").style.display = "none";
+    document.getElementById("settings-tab").style.display = "none";
+    document.getElementById("stats-tab").style.display = "block";
+
+    updateStats();
 }
 
 // Обновление графика веса
@@ -1283,22 +1266,28 @@ function updateWeightChart() {
 }
 
 // Обработчики событий
-document.getElementById("today-btn").addEventListener("click", showTodayTab);
-document.getElementById("progress-btn").addEventListener("click", showProgressTab);
-document.getElementById("achievements-btn").addEventListener("click", showAchievementsTab);
+document.getElementById("home-btn").addEventListener("click", showMainMenu);
+document.getElementById("points-btn").addEventListener("click", showPointsTab);
+document.getElementById("profile-btn").addEventListener("click", showProfileTab);
+document.getElementById("weekly-menu-btn").addEventListener("click", showWeeklyMenuTab);
 document.getElementById("settings-btn").addEventListener("click", showSettingsTab);
+document.getElementById("stats-btn").addEventListener("click", showStatsTab);
 
 document.getElementById("add-water-btn").addEventListener("click", () => {
     userData.water += 200;
-    document.getElementById("water-intake").textContent = userData.water;
     userData.points += 10;
+    userData.pointsHistory.push(`+10 баллов за 200 мл воды (${new Date().toLocaleString()})`);
+    userData.stats.water.push(userData.water);
+    document.getElementById("water-intake").textContent = userData.water;
     saveUserData();
 });
 
 document.getElementById("add-steps-btn").addEventListener("click", () => {
     userData.steps += 1000;
-    document.getElementById("steps-count").textContent = userData.steps;
     userData.points += 20;
+    userData.pointsHistory.push(`+20 баллов за 1000 шагов (${new Date().toLocaleString()})`);
+    userData.stats.steps.push(userData.steps);
+    document.getElementById("steps-count").textContent = userData.steps;
     if (userData.steps >= 10000 && !userData.achievements.includes("10 000 шагов")) {
         userData.achievements.push("10 000 шагов");
         alert("Поздравляем! Вы достигли 10 000 шагов!");
@@ -1314,10 +1303,24 @@ document.getElementById("onboarding-form").addEventListener("submit", (e) => {
     userData.allergies = Array.from(document.getElementById("allergies").selectedOptions).map(option => option.value);
     userData.dailyCalories = calculateDailyCalories(userData.height, userData.weight, userData.goal);
     userData.dailyMacros = calculateMacros(userData.dailyCalories);
+    userData.weeklyMenu = generateWeeklyMenu(userData.allergies);
     document.getElementById("onboarding").style.display = "none";
     document.getElementById("app").style.display = "block";
     saveUserData();
-    showTodayTab();
+    showMainMenu();
+});
+
+document.getElementById("settings-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    userData.height = parseInt(document.getElementById("settings-height").value);
+    userData.weight = parseInt(document.getElementById("settings-weight").value);
+    userData.goal = document.getElementById("settings-goal").value;
+    userData.allergies = Array.from(document.getElementById("settings-allergies").selectedOptions).map(option => option.value);
+    userData.dailyCalories = calculateDailyCalories(userData.height, userData.weight, userData.goal);
+    userData.dailyMacros = calculateMacros(userData.dailyCalories);
+    userData.weeklyMenu = generateWeeklyMenu(userData.allergies);
+    saveUserData();
+    showProfileTab();
 });
 
 // Инициализация
@@ -1326,7 +1329,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (userData.height && userData.weight) {
         document.getElementById("onboarding").style.display = "none";
         document.getElementById("app").style.display = "block";
-        showTodayTab();
+        showMainMenu();
     } else {
         document.getElementById("onboarding").style.display = "block";
         document.getElementById("app").style.display = "none";
