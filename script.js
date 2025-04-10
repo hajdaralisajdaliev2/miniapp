@@ -1,3 +1,4 @@
+// Инициализация Telegram Web Apps
 const tg = window.Telegram?.WebApp;
 tg?.ready();
 
@@ -1077,6 +1078,7 @@ const dishes = [
     }
 ];
 
+// Сохранение и загрузка данных
 function saveUserData() { localStorage.setItem("userData", JSON.stringify(userData)); }
 function loadUserData() {
     const savedData = localStorage.getItem("userData");
@@ -1157,9 +1159,19 @@ function updateStats() {
     document.getElementById("avg-water").textContent = avg(userData.stats.water);
 }
 
+// Перевод цели на русский язык
+function translateGoal(goal) {
+    const goals = {
+        "похудение": "Похудение",
+        "поддержание": "Поддержание",
+        "массонабор": "Массонабор"
+    };
+    return goals[goal] || goal;
+}
+
 // Переключение разделов
 function showMainMenu() {
-    document.getElementById("main-menu").style.display = "block";
+    document.getElementById("main-menu").style.display = "flex";
     document.getElementById("points-tab").style.display = "none";
     document.getElementById("profile-tab").style.display = "none";
     document.getElementById("weekly-menu-tab").style.display = "none";
@@ -1195,7 +1207,7 @@ function showProfileTab() {
 
     document.getElementById("profile-height").textContent = userData.height;
     document.getElementById("profile-weight").textContent = userData.weight;
-    document.getElementById("profile-goal").textContent = userData.goal;
+    document.getElementById("profile-goal").textContent = translateGoal(userData.goal);
     document.getElementById("water-intake").textContent = userData.water;
     document.getElementById("steps-count").textContent = userData.steps;
 
@@ -1267,6 +1279,11 @@ function updateWeightChart() {
 
 // Обработчики событий
 document.getElementById("home-btn").addEventListener("click", showMainMenu);
+document.getElementById("back-btn-points").addEventListener("click", showMainMenu);
+document.getElementById("back-btn-profile").addEventListener("click", showMainMenu);
+document.getElementById("back-btn-weekly").addEventListener("click", showMainMenu);
+document.getElementById("back-btn-settings").addEventListener("click", showMainMenu);
+document.getElementById("back-btn-stats").addEventListener("click", showMainMenu);
 document.getElementById("points-btn").addEventListener("click", showPointsTab);
 document.getElementById("profile-btn").addEventListener("click", showProfileTab);
 document.getElementById("weekly-menu-btn").addEventListener("click", showWeeklyMenuTab);
