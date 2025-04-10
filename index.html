@@ -13,11 +13,12 @@
         <h2>Добро пожаловать!</h2>
         <form id="onboarding-form">
             <label for="height">Рост (см):</label>
-            <input type="number" id="height" required>
+            <input type="number" id="height" placeholder="Рост (см)" required>
             <label for="weight">Вес (кг):</label>
-            <input type="number" id="weight" required>
+            <input type="number" id="weight" placeholder="Вес (кг)" required>
             <label for="goal">Цель:</label>
             <select id="goal" required>
+                <option value="" disabled selected>Цель</option>
                 <option value="похудение">Похудение</option>
                 <option value="поддержание">Поддержание</option>
                 <option value="массонабор">Массонабор</option>
@@ -38,23 +39,21 @@
 
     <!-- Основное приложение -->
     <div id="app" style="display: none;">
-        <!-- Кнопка главного меню (Белый) -->
-        <button id="home-btn" class="home-btn">🏠</button>
-
         <!-- Главное меню (Красный) -->
         <div id="main-menu">
-            <h2>Главное меню</h2>
             <div class="menu-buttons">
-                <button id="points-btn">Баллы</button>
-                <button id="profile-btn">Профиль</button>
-                <button id="weekly-menu-btn">Рацион на неделю</button>
-                <button id="settings-btn">Настройки</button>
-                <button id="stats-btn">Статистика</button>
+                <button id="profile-btn" class="menu-btn">Профиль</button>
+                <button id="points-btn" class="menu-btn">Баллы</button>
+                <button id="weekly-menu-btn" class="menu-btn">Рацион</button>
+                <button id="settings-btn" class="menu-btn">Настройки</button>
+                <button id="stats-btn" class="menu-btn">Статистика</button>
             </div>
+            <button id="home-btn" class="create-btn">Создать звёзды</button>
         </div>
 
         <!-- Баллы (Синий) -->
         <div id="points-tab" style="display: none;">
+            <button id="back-btn-points" class="back-btn">🏠</button>
             <h2>Ваши баллы: <span id="points-count">0</span></h2>
             <h3>История начисления</h3>
             <ul id="points-history"></ul>
@@ -62,6 +61,7 @@
 
         <!-- Профиль (Зелёный) -->
         <div id="profile-tab" style="display: none;">
+            <button id="back-btn-profile" class="back-btn">🏠</button>
             <h2>Ваш профиль</h2>
             <p>Рост: <span id="profile-height">0</span> см</p>
             <p>Вес: <span id="profile-weight">0</span> кг</p>
@@ -79,20 +79,23 @@
 
         <!-- Рацион на неделю (Фиолетовый) -->
         <div id="weekly-menu-tab" style="display: none;">
+            <button id="back-btn-weekly" class="back-btn">🏠</button>
             <h2>Рацион на неделю</h2>
             <div id="weekly-menu-list"></div>
         </div>
 
         <!-- Настройки (Чёрный) -->
         <div id="settings-tab" style="display: none;">
+            <button id="back-btn-settings" class="back-btn">🏠</button>
             <h2>Настройки</h2>
             <form id="settings-form">
                 <label for="settings-height">Рост (см):</label>
-                <input type="number" id="settings-height">
+                <input type="number" id="settings-height" placeholder="Рост (см)">
                 <label for="settings-weight">Вес (кг):</label>
-                <input type="number" id="settings-weight">
+                <input type="number" id="settings-weight" placeholder="Вес (кг)">
                 <label for="settings-goal">Цель:</label>
                 <select id="settings-goal">
+                    <option value="" disabled selected>Цель</option>
                     <option value="похудение">Похудение</option>
                     <option value="поддержание">Поддержание</option>
                     <option value="массонабор">Массонабор</option>
@@ -113,6 +116,7 @@
 
         <!-- Статистика (Жёлтый) -->
         <div id="stats-tab" style="display: none;">
+            <button id="back-btn-stats" class="back-btn">🏠</button>
             <h2>Статистика</h2>
             <p>Средние калории за неделю: <span id="avg-calories">0</span> ккал</p>
             <p>Средние шаги за неделю: <span id="avg-steps">0</span> шагов</p>
