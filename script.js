@@ -1136,7 +1136,7 @@ function displayWeeklyMenu() {
 
     userData.weeklyMenu.forEach(day => {
         const dayDiv = document.createElement("div");
-        dayDiv.className = "day-card";
+        dayDiv.className = "day-card float";
         dayDiv.innerHTML = `<h3>${day.day}</h3>`;
         day.meals.forEach(dish => {
             const dishDiv = document.createElement("div");
@@ -1169,7 +1169,7 @@ function translateGoal(goal) {
     return goals[goal] || goal;
 }
 
-// Переключение разделов
+// Переключение разделов с анимацией
 function showMainMenu() {
     document.getElementById("main-menu").style.display = "flex";
     document.getElementById("points-tab").style.display = "none";
@@ -1270,10 +1270,16 @@ function updateWeightChart() {
             labels: userData.weightHistory.map((_, index) => `День ${index + 1}`),
             datasets: [{
                 label: "Вес (кг)", data: userData.weightHistory,
-                borderColor: "rgba(75, 192, 192, 1)", fill: false
+                borderColor: "#00DDEB", fill: false, tension: 0.4
             }]
         },
-        options: { scales: { y: { beginAtZero: false } } }
+        options: {
+            scales: {
+                y: { beginAtZero: false, ticks: { color: "#fff" } },
+                x: { ticks: { color: "#fff" } }
+            },
+            plugins: { legend: { labels: { color: "#fff" } } }
+        }
     });
 }
 
@@ -1281,9 +1287,9 @@ function updateWeightChart() {
 document.getElementById("home-btn").addEventListener("click", showMainMenu);
 document.getElementById("back-btn-points").addEventListener("click", showMainMenu);
 document.getElementById("back-btn-profile").addEventListener("click", showMainMenu);
-document.getElementById("back-btn-weekly").addEventListener("click", showMainMenu);
-document.getElementById("back-btn-settings").addEventListener("click", showMainMenu);
-document.getElementById("back-btn-stats").addEventListener("click", showMainMenu);
+document.getElementById("back-btn-weekly").addEventListener("click", showWeeklyMenuTab);
+document.getElementById("back-btn-settings").addEventListener("click", showSettingsTab);
+document.getElementById("back-btn-stats").addEventListener("click", showStatsTab);
 document.getElementById("points-btn").addEventListener("click", showPointsTab);
 document.getElementById("profile-btn").addEventListener("click", showProfileTab);
 document.getElementById("weekly-menu-btn").addEventListener("click", showWeeklyMenuTab);
