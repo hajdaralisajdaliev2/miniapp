@@ -38,32 +38,85 @@
 
     <!-- Основное приложение -->
     <div id="app" style="display: none;">
-        <nav>
-            <button id="today-btn" class="active">Сегодня</button>
-            <button id="progress-btn">Прогресс</button>
-            <button id="achievements-btn">Достижения</button>
-            <button id="settings-btn">Настройки</button>
-        </nav>
-        <div id="today-tab">
-            <div id="menu-list"></div>
+        <!-- Кнопка главного меню (Белый) -->
+        <button id="home-btn" class="home-btn">🏠</button>
+
+        <!-- Главное меню (Красный) -->
+        <div id="main-menu">
+            <h2>Главное меню</h2>
+            <div class="menu-buttons">
+                <button id="points-btn">Баллы</button>
+                <button id="profile-btn">Профиль</button>
+                <button id="weekly-menu-btn">Рацион на неделю</button>
+                <button id="settings-btn">Настройки</button>
+                <button id="stats-btn">Статистика</button>
+            </div>
         </div>
-        <div id="progress-tab">
-            <h3>Вода</h3>
-            <p>Выпито: <span id="water-intake">0</span> мл</p>
+
+        <!-- Баллы (Синий) -->
+        <div id="points-tab" style="display: none;">
+            <h2>Ваши баллы: <span id="points-count">0</span></h2>
+            <h3>История начисления</h3>
+            <ul id="points-history"></ul>
+        </div>
+
+        <!-- Профиль (Зелёный) -->
+        <div id="profile-tab" style="display: none;">
+            <h2>Ваш профиль</h2>
+            <p>Рост: <span id="profile-height">0</span> см</p>
+            <p>Вес: <span id="profile-weight">0</span> кг</p>
+            <p>Цель: <span id="profile-goal"></span></p>
+            <h3>Прогресс</h3>
+            <p>Вода: <span id="water-intake">0</span> мл</p>
             <button id="add-water-btn">Добавить 200 мл</button>
-            <h3>Шаги</h3>
-            <p>Пройдено: <span id="steps-count">0</span> шагов</p>
+            <p>Шаги: <span id="steps-count">0</span> шагов</p>
             <button id="add-steps-btn">Добавить 1000 шагов</button>
             <h3>График веса</h3>
             <canvas id="weight-chart"></canvas>
-        </div>
-        <div id="achievements-tab">
-            <h3>Ваши достижения</h3>
+            <h3>Достижения</h3>
             <ul id="achievements-list"></ul>
         </div>
-        <div id="settings-tab">
-            <h3>Настройки</h3>
-            <p>Здесь будут настройки...</p>
+
+        <!-- Рацион на неделю (Фиолетовый) -->
+        <div id="weekly-menu-tab" style="display: none;">
+            <h2>Рацион на неделю</h2>
+            <div id="weekly-menu-list"></div>
+        </div>
+
+        <!-- Настройки (Чёрный) -->
+        <div id="settings-tab" style="display: none;">
+            <h2>Настройки</h2>
+            <form id="settings-form">
+                <label for="settings-height">Рост (см):</label>
+                <input type="number" id="settings-height">
+                <label for="settings-weight">Вес (кг):</label>
+                <input type="number" id="settings-weight">
+                <label for="settings-goal">Цель:</label>
+                <select id="settings-goal">
+                    <option value="похудение">Похудение</option>
+                    <option value="поддержание">Поддержание</option>
+                    <option value="массонабор">Массонабор</option>
+                </select>
+                <label for="settings-allergies">Аллергии:</label>
+                <select id="settings-allergies" multiple>
+                    <option value="Яйца">Яйца</option>
+                    <option value="Молоко">Молоко</option>
+                    <option value="Орехи">Орехи</option>
+                    <option value="Глютен">Глютен</option>
+                    <option value="Рыба">Рыба</option>
+                    <option value="Морепродукты">Морепродукты</option>
+                    <option value="Соя">Соя</option>
+                </select>
+                <button type="submit">Сохранить</button>
+            </form>
+        </div>
+
+        <!-- Статистика (Жёлтый) -->
+        <div id="stats-tab" style="display: none;">
+            <h2>Статистика</h2>
+            <p>Средние калории за неделю: <span id="avg-calories">0</span> ккал</p>
+            <p>Средние шаги за неделю: <span id="avg-steps">0</span> шагов</p>
+            <p>Средняя вода за неделю: <span id="avg-water">0</span> мл</p>
         </div>
     </div>
 
