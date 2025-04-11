@@ -1170,7 +1170,22 @@ function translateGoal(goal) {
 }
 
 // Переключение разделов с анимацией
+function showWelcomeScreen() {
+    document.getElementById("welcome-screen").style.display = "flex";
+    document.getElementById("onboarding").style.display = "none";
+    document.getElementById("app").style.display = "none";
+}
+
+function showOnboarding() {
+    document.getElementById("welcome-screen").style.display = "none";
+    document.getElementById("onboarding").style.display = "block";
+    document.getElementById("app").style.display = "none";
+}
+
 function showMainMenu() {
+    document.getElementById("welcome-screen").style.display = "none";
+    document.getElementById("onboarding").style.display = "none";
+    document.getElementById("app").style.display = "block";
     document.getElementById("main-menu").style.display = "flex";
     document.getElementById("points-tab").style.display = "none";
     document.getElementById("profile-tab").style.display = "none";
@@ -1284,12 +1299,19 @@ function updateWeightChart() {
 }
 
 // Обработчики событий
-document.getElementById("home-btn").addEventListener("click", showMainMenu);
+document.getElementById("continue-btn").addEventListener("click", () => {
+    if (userData.height && userData.weight) {
+        showMainMenu();
+    } else {
+        showOnboarding();
+    }
+});
+
 document.getElementById("back-btn-points").addEventListener("click", showMainMenu);
 document.getElementById("back-btn-profile").addEventListener("click", showMainMenu);
-document.getElementById("back-btn-weekly").addEventListener("click", showWeeklyMenuTab);
-document.getElementById("back-btn-settings").addEventListener("click", showSettingsTab);
-document.getElementById("back-btn-stats").addEventListener("click", showStatsTab);
+document.getElementById("back-btn-weekly").addEventListener("click", showMainMenu);
+document.getElementById("back-btn-settings").addEventListener("click", showMainMenu);
+document.getElementById("back-btn-stats").addEventListener("click", showMainMenu);
 document.getElementById("points-btn").addEventListener("click", showPointsTab);
 document.getElementById("profile-btn").addEventListener("click", showProfileTab);
 document.getElementById("weekly-menu-btn").addEventListener("click", showWeeklyMenuTab);
@@ -1349,12 +1371,5 @@ document.getElementById("settings-form").addEventListener("submit", (e) => {
 // Инициализация
 document.addEventListener("DOMContentLoaded", () => {
     loadUserData();
-    if (userData.height && userData.weight) {
-        document.getElementById("onboarding").style.display = "none";
-        document.getElementById("app").style.display = "block";
-        showMainMenu();
-    } else {
-        document.getElementById("onboarding").style.display = "block";
-        document.getElementById("app").style.display = "none";
-    }
+    showWelcomeScreen();
 });
