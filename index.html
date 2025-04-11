@@ -48,7 +48,10 @@
     <div id="app" style="display: none;">
         <!-- Главное меню -->
         <div id="main-menu" class="fade-in">
-            <div class="shrimp-emoji">🦐</div>
+            <div id="points-display" class="points-display">Счёт: <span id="points-count">0</span></div>
+            <div class="shrimp-container">
+                <div id="shrimp" class="shrimp-emoji">🦐</div>
+            </div>
             <div class="menu-buttons">
                 <button id="profile-btn" class="menu-btn glow-btn">Профиль</button>
                 <button id="points-btn" class="menu-btn glow-btn">Баллы</button>
@@ -61,7 +64,7 @@
         <!-- Баллы -->
         <div id="points-tab" style="display: none;" class="fade-in">
             <button id="back-btn-points" class="back-btn glow-btn">🏠</button>
-            <h2>Ваши звёздные баллы: <span id="points-count">0</span></h2>
+            <h2>Ваши звёздные баллы: <span id="points-tab-count">0</span></h2>
             <h3>История начисления</h3>
             <ul id="points-history" class="glow-list"></ul>
         </div>
