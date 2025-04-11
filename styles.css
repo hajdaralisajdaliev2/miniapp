@@ -28,7 +28,27 @@ body {
 .float { animation: float 3s infinite ease-in-out; }
 
 /* Скрытие разделов */
-#onboarding, #main-menu, #points-tab, #profile-tab, #weekly-menu-tab, #settings-tab, #stats-tab { display: none; }
+#welcome-screen, #onboarding, #main-menu, #points-tab, #profile-tab, #weekly-menu-tab, #settings-tab, #stats-tab { display: none; }
+
+/* Приветственный экран */
+#welcome-screen {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    min-height: 100vh; text-align: center; padding: 20px;
+}
+#welcome-screen h2 {
+    font-family: 'Orbitron', sans-serif; font-size: 32px; margin-bottom: 30px;
+    color: #00DDEB; text-shadow: 0 0 15px rgba(0, 221, 235, 0.7);
+}
+#continue-btn {
+    background: linear-gradient(45deg, #00DDEB, #D946EF); color: #fff; border: none;
+    padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: all 0.3s ease; text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(0, 221, 235, 0.5);
+}
+#continue-btn:hover {
+    background: linear-gradient(45deg, #D946EF, #00DDEB); box-shadow: 0 0 25px rgba(217, 70, 239, 0.8);
+    transform: scale(1.05);
+}
 
 /* Онбординг-форма */
 #onboarding {
@@ -66,17 +86,14 @@ body {
 /* Основное приложение */
 #app { padding: 20px; min-height: 100vh; display: flex; flex-direction: column; }
 
-/* Главное меню (Красный) */
+/* Главное меню */
 #main-menu {
-    display: flex; flex-direction: column; justify-content: center;
+    display: flex; flex-direction: column; justify-content: flex-end;
     align-items: center; flex: 1; padding: 20px 0;
-}
-.cosmic-title {
-    font-family: 'Orbitron', sans-serif; font-size: 36px; margin-bottom: 40px;
-    color: #fff; text-shadow: 0 0 15px rgba(0, 221, 235, 0.7), 0 0 30px rgba(217, 70, 239, 0.5);
 }
 .menu-buttons {
     display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+    margin-bottom: 20px;
 }
 .menu-btn {
     background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -85,18 +102,8 @@ body {
     transition: all 0.3s ease; backdrop-filter: blur(5px);
 }
 .menu-btn:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.1); }
-.create-btn {
-    background: linear-gradient(45deg, #00DDEB, #D946EF); color: #fff; border: none;
-    border-radius: 25px; padding: 15px 30px; font-size: 16px; cursor: pointer;
-    margin-top: 40px; box-shadow: 0 0 15px rgba(0, 221, 235, 0.5);
-    transition: all 0.3s ease; text-transform: uppercase;
-}
-.create-btn:hover {
-    background: linear-gradient(45deg, #D946EF, #00DDEB); box-shadow: 0 0 25px rgba(217, 70, 239, 0.8);
-    transform: scale(1.05);
-}
 
-/* Кнопка возврата (Белый) */
+/* Кнопка возврата */
 .back-btn {
     position: fixed; top: 20px; left: 20px; z-index: 1000;
     background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -105,7 +112,7 @@ body {
 }
 .back-btn:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.1); }
 
-/* Баллы (Синий) */
+/* Баллы */
 #points-tab {
     padding: 20px; background: rgba(255, 255, 255, 0.05); color: #fff;
     min-height: 100vh; border-radius: 15px; backdrop-filter: blur(10px);
@@ -123,7 +130,7 @@ body {
 }
 .glow-list li:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-3px); }
 
-/* Профиль (Зелёный) */
+/* Профиль */
 #profile-tab {
     padding: 20px; background: rgba(255, 255, 255, 0.05); color: #fff;
     min-height: 100vh; border-radius: 15px; backdrop-filter: blur(10px);
@@ -136,7 +143,7 @@ body {
 #profile-tab button { margin-bottom: 20px; }
 .glow-chart { background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 10px; }
 
-/* Рацион на неделю (Фиолетовый) */
+/* Рацион на неделю */
 #weekly-menu-tab {
     padding: 20px; background: rgba(255, 255, 255, 0.05); color: #fff;
     min-height: 100vh; border-radius: 15px; backdrop-filter: blur(10px);
@@ -162,7 +169,7 @@ body {
 }
 .dish-card h4 { font-size: 16px; }
 
-/* Настройки (Чёрный) */
+/* Настройки */
 #settings-tab {
     padding: 20px; background: rgba(255, 255, 255, 0.05); color: #fff;
     min-height: 100vh; border-radius: 15px; backdrop-filter: blur(10px);
@@ -172,7 +179,7 @@ body {
     text-shadow: 0 0 10px rgba(0, 221, 235, 0.5);
 }
 
-/* Статистика (Жёлтый) */
+/* Статистика */
 #stats-tab {
     padding: 20px; background: rgba(255, 255, 255, 0.05); color: #fff;
     min-height: 100vh; border-radius: 15px; backdrop-filter: blur(10px);
