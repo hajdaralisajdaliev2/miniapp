@@ -9,7 +9,6 @@ let userData = {
     dailyCalories: 0, dailyMacros: { protein: 0, fat: 0, carbs: 0 },
     pointsHistory: [], weeklyMenu: [], stats: { calories: [], steps: [], water: [] }
 };
-
 // Список блюд (вставляем массив dishes из предыдущего шага)
 const dishes = [
     {
@@ -1193,6 +1192,9 @@ function showMainMenu() {
     document.getElementById("weekly-menu-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "none";
     document.getElementById("stats-tab").style.display = "none";
+
+    // Обновляем отображение баллов
+    document.getElementById("points-count").textContent = userData.points;
 }
 
 function showPointsTab() {
@@ -1203,7 +1205,7 @@ function showPointsTab() {
     document.getElementById("settings-tab").style.display = "none";
     document.getElementById("stats-tab").style.display = "none";
 
-    document.getElementById("points-count").textContent = userData.points;
+    document.getElementById("points-tab-count").textContent = userData.points;
     const historyList = document.getElementById("points-history");
     historyList.innerHTML = "";
     userData.pointsHistory.forEach(entry => {
@@ -1367,6 +1369,21 @@ document.getElementById("settings-form").addEventListener("submit", (e) => {
     userData.weeklyMenu = generateWeeklyMenu(userData.allergies);
     saveUserData();
     showProfileTab();
+});
+
+// Обработчик клика по креветке
+document.getElementById("shrimp").addEventListener("click", () => {
+    userData.points += 1;
+    userData.pointsHistory.push(`+1 балл за клик по креветке (${new Date().toLocaleString()})`);
+    document.getElementById("points-count").textContent = userData.points;
+    saveUserData();
+
+    // Создаём анимацию "+1"
+    const pointPop = document.createElement("div");
+    pointPop.className = "point-pop";
+    pointPop.textContent = "+1";
+    document.getElementById("main-menu").appendChild(pointPop);
+    setTimeout(() => pointPop.remove(), 1000); // Удаляем элемент после анимации
 });
 
 // Инициализация
