@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solaris Eubuleus</title>
+    <title>Приложение для здорового питания</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <!-- Приветственный экран -->
+    <div id="welcome-screen" class="fade-in">
+        <h2>Добро пожаловать в ваше космическое путешествие к здоровью! 🚀</h2>
+        <button id="continue-btn" class="neon-btn">Продолжить</button>
+    </div>
+
     <!-- Онбординг -->
-    <div id="onboarding" class="fade-in">
-        <h2>Добро пожаловать в Solaris Eubuleus!</h2>
+    <div id="onboarding" class="fade-in" style="display: none;">
+        <h2>Давайте начнём!</h2>
         <form id="onboarding-form" class="glow-form">
             <label for="height">Рост (см):</label>
             <input type="number" id="height" placeholder="Рост (см)" required>
@@ -40,9 +46,8 @@
 
     <!-- Основное приложение -->
     <div id="app" style="display: none;">
-        <!-- Главное меню (Красный) -->
+        <!-- Главное меню -->
         <div id="main-menu" class="fade-in">
-            <h1 class="cosmic-title">Solaris Eubuleus</h1>
             <div class="menu-buttons">
                 <button id="profile-btn" class="menu-btn glow-btn">Профиль</button>
                 <button id="points-btn" class="menu-btn glow-btn">Баллы</button>
@@ -50,10 +55,9 @@
                 <button id="settings-btn" class="menu-btn glow-btn">Настройки</button>
                 <button id="stats-btn" class="menu-btn glow-btn">Статистика</button>
             </div>
-            <button id="home-btn" class="create-btn neon-btn">Создать звёзды</button>
         </div>
 
-        <!-- Баллы (Синий) -->
+        <!-- Баллы -->
         <div id="points-tab" style="display: none;" class="fade-in">
             <button id="back-btn-points" class="back-btn glow-btn">🏠</button>
             <h2>Ваши звёздные баллы: <span id="points-count">0</span></h2>
@@ -61,7 +65,7 @@
             <ul id="points-history" class="glow-list"></ul>
         </div>
 
-        <!-- Профиль (Зелёный) -->
+        <!-- Профиль -->
         <div id="profile-tab" style="display: none;" class="fade-in">
             <button id="back-btn-profile" class="back-btn glow-btn">🏠</button>
             <h2>Ваш космический профиль</h2>
@@ -79,14 +83,14 @@
             <ul id="achievements-list" class="glow-list"></ul>
         </div>
 
-        <!-- Рацион на неделю (Фиолетовый) -->
+        <!-- Рацион на неделю -->
         <div id="weekly-menu-tab" style="display: none;" class="fade-in">
             <button id="back-btn-weekly" class="back-btn glow-btn">🏠</button>
             <h2>Рацион на неделю</h2>
             <div id="weekly-menu-list" class="glow-list"></div>
         </div>
 
-        <!-- Настройки (Чёрный) -->
+        <!-- Настройки -->
         <div id="settings-tab" style="display: none;" class="fade-in">
             <button id="back-btn-settings" class="back-btn glow-btn">🏠</button>
             <h2>Настройки</h2>
@@ -116,7 +120,7 @@
             </form>
         </div>
 
-        <!-- Статистика (Жёлтый) -->
+        <!-- Статистика -->
         <div id="stats-tab" style="display: none;" class="fade-in">
             <button id="back-btn-stats" class="back-btn glow-btn">🏠</button>
             <h2>Статистика</h2>
