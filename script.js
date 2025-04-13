@@ -7,7 +7,8 @@ let userData = {
     height: 0, weight: 0, goal: '', allergies: [], points: 0,
     achievements: [], water: 0, steps: 0, weightHistory: [70],
     dailyCalories: 0, dailyMacros: { protein: 0, fat: 0, carbs: 0 },
-    pointsHistory: [], weeklyMenu: [], stats: { calories: [], steps: [], water: [] }
+    pointsHistory: [], weeklyMenu: [], stats: { calories: [], steps: [], water: [] },
+    tasks: [], tasksCompleted: 0, lastTaskDate: null, combo: 0, lastClickTime: 0
 };
 // Список блюд (вставляем массив dishes из предыдущего шага)
 const dishes = [
@@ -1084,6 +1085,7 @@ function saveUserData() { localStorage.setItem("userData", JSON.stringify(userDa
 function loadUserData() {
     const savedData = localStorage.getItem("userData");
     if (savedData) userData = JSON.parse(savedData);
+    checkDailyTasks();
 }
 
 // Расчёт дневной нормы калорий
@@ -1146,6 +1148,9 @@ function displayWeeklyMenu() {
                 <img src="${dish.image_url}" alt="${dish.name}">
                 <h4>${dish.name}</h4>
             `;
+            dishDiv.addEventListener("click", () => {
+                checkTaskCompletion("eatHealthy");
+            });
             dayDiv.appendChild(dishDiv);
         });
         menuContainer.appendChild(dayDiv);
@@ -1169,6 +1174,117 @@ function translateGoal(goal) {
     };
     return goals[goal] || goal;
 }
+
+// Ежедневные задания
+function checkDailyTasks() {
+    const today = new Date().toDateString();
+    if (userData.lastTaskDate !== today) {
+        userData.tasks = [
+            { id: "drinkWater", description: "Выпить 500 мл воды", completed: false, target: 500, progress: 0 },
+            { id: "walkSteps", description: "Пройти 5000 шагов", completed: false, target: 5000, progress: 0 },
+            { id: "eatHealthy", description: "Съесть полезное блюдо", completed: false, target: 1, progress: 0 }
+        ];
+        userData.tasksCompleted = 0;
+        userData.lastTaskDate = today;
+        userData.water = 0;
+        userData.steps = 0;
+        saveUserData();
+    }
+    displayTasks();
+}
+
+function displayTasks() {
+    const tasksList = document.getElementById("tasks-list");
+    tasksList.innerHTML = "";
+    userData.tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.className = task.completed ? "completed" : "";
+        li.textContent = `${task.description} (${task.progress}/${task.target})`;
+        tasksList.appendChild(li);
+    });
+    document.getElementById("tasks-progress").textContent = `${userData.tasksCompleted}/3`;
+    document.getElementById("progress-bar-fill").style.width = `${(userData.tasksCompleted / 3) * 100}%`;
+}
+
+function checkTaskCompletion(taskId) {
+    const task = userData.tasks.find(t => t.id === taskId);
+    if (!task || task.completed) return;
+
+    if (taskId === "drinkWater") task.progress = userData.water;
+    if (taskId === "walkSteps") task.progress = userData.steps;
+    if (taskId === "eatHealthy") task.progress += 1;
+
+    if (task.progress >= task.target) {
+        task.completed = true;
+        userData.tasksCompleted += 1;
+        userData.points += 50;
+        userData.pointsHistory.push(`+50 баллов за задание: ${task.description} (${new Date().toLocaleString()})`);
+        showNotification(`Задание выполнено: ${task.description}! +50 баллов`);
+        if (userData.tasksCompleted === 3) {
+            userData.points += 100;
+            userData.pointsHistory.push(`+100 баллов за выполнение всех заданий дня (${new Date().toLocaleString()})`);
+            showNotification("Все задания выполнены! +100 бонусных баллов!");
+        }
+    }
+    saveUserData();
+    displayTasks();
+    document.getElementById("points-count").textContent = userData.points;
+}
+
+// Уведомления
+function showNotification(message) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.classList.remove("show");
+    setTimeout(() => notification.classList.add("show"), 10);
+}
+
+// Эффект частиц
+const canvas = document.getElementById("particle-canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = 150;
+canvas.height = 150;
+let particlesArray = [];
+
+class Particle {
+    constructor() {
+        this.x = canvas.width / 2;
+        this.y = canvas.height / 2;
+        this.size = Math.random() * 5 + 1;
+        this.speedX = Math.random() * 3 - 1.5;
+        this.speedY = Math.random() * 3 - 1.5;
+        this.life = 50;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life--;
+    }
+    draw() {
+        ctx.fillStyle = "rgba(217, 70, 239, 0.8)";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function handleParticles() {
+    for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+        if (particlesArray[i].life <= 0) {
+            particlesArray.splice(i, 1);
+            i--;
+        }
+    }
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    handleParticles();
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
 
 // Переключение разделов с анимацией
 function showWelcomeScreen() {
@@ -1196,6 +1312,7 @@ function showMainMenu() {
 
     // Обновляем отображение баллов
     document.getElementById("points-count").textContent = userData.points;
+    displayTasks();
 }
 
 function showPointsTab() {
@@ -1275,7 +1392,7 @@ function showStatsTab() {
     document.getElementById("profile-tab").style.display = "none";
     document.getElementById("weekly-menu-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "none";
-    document.getElementΩById("stats-tab").style.display = "block";
+    document.getElementById("stats-tab").style.display = "block";
 
     updateStats();
 }
@@ -1328,6 +1445,7 @@ document.getElementById("add-water-btn").addEventListener("click", () => {
     userData.pointsHistory.push(`+10 баллов за 200 мл воды (${new Date().toLocaleString()})`);
     userData.stats.water.push(userData.water);
     document.getElementById("water-intake").textContent = userData.water;
+    checkTaskCompletion("drinkWater");
     saveUserData();
 });
 
@@ -1339,8 +1457,9 @@ document.getElementById("add-steps-btn").addEventListener("click", () => {
     document.getElementById("steps-count").textContent = userData.steps;
     if (userData.steps >= 10000 && !userData.achievements.includes("10 000 шагов")) {
         userData.achievements.push("10 000 шагов");
-        alert("Поздравляем! Вы достигли 10 000 шагов!");
+        showNotification("Поздравляем! Вы достигли 10 000 шагов!");
     }
+    checkTaskCompletion("walkSteps");
     saveUserData();
 });
 
@@ -1374,22 +1493,53 @@ document.getElementById("settings-form").addEventListener("submit", (e) => {
 
 // Обработчик клика по креветке
 document.getElementById("shrimp").addEventListener("click", () => {
-    // Вибрационный отклик (работает на устройствах с поддержкой Vibration API)
+    // Вибрация
     if ("vibrate" in navigator) {
-        navigator.vibrate(50); // Вибрация на 50 мс
+        navigator.vibrate(50);
+    } else {
+        const shrimp = document.getElementById("shrimp");
+        shrimp.style.transform = "scale(0.85)";
+        setTimeout(() => shrimp.style.transform = "scale(1)", 200);
     }
 
+    // Звук
+    const clickSound = document.getElementById("click-sound");
+    clickSound.currentTime = 0;
+    clickSound.play();
+
+    // Комбо-клики
+    const currentTime = Date.now();
+    if (currentTime - userData.lastClickTime < 500) {
+        userData.combo += 1;
+        if (userData.combo >= 5) {
+            const bonusPoints = userData.combo * 2;
+            userData.points += bonusPoints;
+            userData.pointsHistory.push(`+${bonusPoints} баллов за комбо-клик x${userData.combo} (${new Date().toLocaleString()})`);
+            showNotification(`Комбо x${userData.combo}! +${bonusPoints} баллов!`);
+            userData.combo = 0;
+        }
+    } else {
+        userData.combo = 0;
+    }
+    userData.lastClickTime = currentTime;
+
+    // Очки
     userData.points += 1;
     userData.pointsHistory.push(`+1 балл за клик по креветке (${new Date().toLocaleString()})`);
     document.getElementById("points-count").textContent = userData.points;
     saveUserData();
 
-    // Создаём анимацию "+1"
+    // Анимация "+1"
     const pointPop = document.createElement("div");
     pointPop.className = "point-pop";
     pointPop.textContent = "+1";
     document.getElementById("main-menu").appendChild(pointPop);
-    setTimeout(() => pointPop.remove(), 1000); // Удаляем элемент после анимации
+    setTimeout(() => pointPop.remove(), 1000);
+
+    // Частицы
+    for (let i = 0; i < 5; i++) {
+        particlesArray.push(new Particle());
+    }
 });
 
 // Инициализация
