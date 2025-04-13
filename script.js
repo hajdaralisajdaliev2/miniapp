@@ -1275,7 +1275,7 @@ function showStatsTab() {
     document.getElementById("profile-tab").style.display = "none";
     document.getElementById("weekly-menu-tab").style.display = "none";
     document.getElementById("settings-tab").style.display = "none";
-    document.getElementById("stats-tab").style.display = "block";
+    document.getElementΩById("stats-tab").style.display = "block";
 
     updateStats();
 }
