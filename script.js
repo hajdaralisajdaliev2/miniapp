@@ -1078,6 +1078,7 @@ const dishes = [
 ];
 
 
+
 // Сохранение и загрузка данных
 function saveUserData() { localStorage.setItem("userData", JSON.stringify(userData)); }
 function loadUserData() {
@@ -1373,6 +1374,11 @@ document.getElementById("settings-form").addEventListener("submit", (e) => {
 
 // Обработчик клика по креветке
 document.getElementById("shrimp").addEventListener("click", () => {
+    // Вибрационный отклик (работает на устройствах с поддержкой Vibration API)
+    if ("vibrate" in navigator) {
+        navigator.vibrate(50); // Вибрация на 50 мс
+    }
+
     userData.points += 1;
     userData.pointsHistory.push(`+1 балл за клик по креветке (${new Date().toLocaleString()})`);
     document.getElementById("points-count").textContent = userData.points;
