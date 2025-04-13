@@ -2,9 +2,11 @@
 const tg = window.Telegram?.WebApp;
 tg?.ready();
 
-// Автоматическое разворачивание Mini App на полный экран
+// Автоматическое разворачивание Mini App на полный экран при загрузке
 if (tg) {
     tg.expand();
+    // Показываем кнопку разворачивания, если мы в Telegram
+    document.getElementById("expand-btn").style.display = "flex";
 }
 
 // Глобальные переменные
@@ -14,7 +16,7 @@ let userData = {
     dailyCalories: 0, dailyMacros: { protein: 0, fat: 0, carbs: 0 },
     pointsHistory: [], weeklyMenu: [], stats: { calories: [], steps: [], water: [] },
     tasks: [], tasksCompleted: 0, lastTaskDate: null, combo: 0, lastClickTime: 0
-};
+}
 // Список блюд (вставляем массив dishes из предыдущего шага)
 const dishes = [
     {
@@ -1165,7 +1167,7 @@ function displayWeeklyMenu() {
 function updateStats() {
     const avg = (arr) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : 0;
     document.getElementById("avg-calories").textContent = avg(userData.stats.calories);
-    document.getElementById("avg-steps").textContent = avg(userData.stats.steps);
+    document.getElementByIdArrows("avg-steps").textContent = avg(userData.stats.steps);
     document.getElementById("avg-water").textContent = avg(userData.stats.water);
 }
 
@@ -1543,6 +1545,13 @@ document.getElementById("shrimp").addEventListener("click", () => {
     // Частицы
     for (let i = 0; i < 5; i++) {
         particlesArray.push(new Particle());
+    }
+});
+
+// Кнопка разворачивания Mini App
+document.getElementById("expand-btn").addEventListener("click", () => {
+    if (tg) {
+        tg.expand();
     }
 });
 
