@@ -23,13 +23,14 @@ body {
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0); }
 }
-@keyframes rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 @keyframes pointPop {
     0% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-50px); }
+}
+@keyframes shrimpGlow {
+    0% { text-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
+    50% { text-shadow: 0 0 30px rgba(217, 70, 239, 1); }
+    100% { text-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
 }
 .fade-in { animation: fadeIn 0.8s ease-out; }
 .glow-btn:hover { animation: glowPulse 1.5s infinite; }
@@ -108,19 +109,19 @@ body {
     flex: 1; display: flex; align-items: center; justify-content: center;
 }
 .shrimp-emoji {
-    font-size: 100px; cursor: pointer; transition: transform 0.2s ease;
-    animation: float 3s infinite ease-in-out, rotate 10s infinite linear;
+    font-size: 150px; cursor: pointer; transition: transform 0.2s ease;
+    animation: float 3s infinite ease-in-out;
     text-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
 }
-.shrimp-emoji:hover { transform: scale(1.1); }
-.shrimp-emoji:active { transform: scale(0.9); }
+.shrimp-emoji:hover { transform: scale(1.05); }
+.shrimp-emoji:active { transform: scale(0.95); animation: shrimpGlow 0.5s; }
 .point-pop {
     position: absolute; top: 60px; font-size: 20px; color: #D946EF;
     animation: pointPop 1s forwards; pointer-events: none;
 }
 .menu-buttons {
     display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-    margin-top: auto; margin-bottom: 10px;
+    position: fixed; bottom: 20px; width: 100%;
 }
 .menu-btn {
     background: #000; color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -220,10 +221,10 @@ body {
 /* Адаптивность */
 @media (max-width: 600px) {
     #app { padding: 10px; }
-    .menu-buttons { gap: 15px; }
+    .menu-buttons { gap: 10px; bottom: 10px; }
     .menu-btn { width: 60px; height: 60px; font-size: 12px; }
     .dish-card { flex-direction: column; align-items: flex-start; }
     .dish-card img { width: 100%; height: 120px; margin-right: 0; margin-bottom: 10px; }
-    .shrimp-emoji { font-size: 80px; }
+    .shrimp-emoji { font-size: 120px; }
     .points-display { font-size: 20px; }
 }
