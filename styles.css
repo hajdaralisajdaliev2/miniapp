@@ -28,9 +28,9 @@ body {
     100% { opacity: 0; transform: translateY(-50px); }
 }
 @keyframes shrimpGlow {
-    0% { text-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
-    50% { text-shadow: 0 0 30px rgba(217, 70, 239, 1); }
-    100% { text-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
+    0% { box-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(217, 70, 239, 1); }
+    100% { box-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
 }
 .fade-in { animation: fadeIn 0.8s ease-out; }
 .glow-btn:hover { animation: glowPulse 1.5s infinite; }
@@ -108,13 +108,13 @@ body {
 .shrimp-container {
     flex: 1; display: flex; align-items: center; justify-content: center;
 }
-.shrimp-emoji {
-    font-size: 150px; cursor: pointer; transition: transform 0.2s ease;
+.shrimp-img {
+    width: 150px; height: 150px; cursor: pointer; transition: transform 0.2s ease;
     animation: float 3s infinite ease-in-out;
-    text-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
+    box-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
 }
-.shrimp-emoji:hover { transform: scale(1.05); }
-.shrimp-emoji:active { transform: scale(0.95); animation: shrimpGlow 0.5s; }
+.shrimp-img:hover { transform: scale(1.05); }
+.shrimp-img:active { transform: scale(0.95); animation: shrimpGlow 0.5s; }
 .point-pop {
     position: absolute; top: 60px; font-size: 20px; color: #D946EF;
     animation: pointPop 1s forwards; pointer-events: none;
@@ -225,6 +225,6 @@ body {
     .menu-btn { width: 60px; height: 60px; font-size: 12px; }
     .dish-card { flex-direction: column; align-items: flex-start; }
     .dish-card img { width: 100%; height: 120px; margin-right: 0; margin-bottom: 10px; }
-    .shrimp-emoji { font-size: 120px; }
+    .shrimp-img { width: 120px; height: 120px; }
     .points-display { font-size: 20px; }
 }
