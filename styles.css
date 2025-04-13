@@ -140,43 +140,9 @@ body {
     font-family: 'Orbitron', sans-serif; font-size: 24px; color: #00DDEB;
     text-shadow: 0 0 10px rgba(0, 221, 235, 0.7);
 }
-.shrimp-container {
-    flex: 1; display: flex; align-items: center; justify-content: center; position: relative;
-}
-.shrimp-img {
-    width: 150px; height: 150px; cursor: pointer; transition: transform 0.2s ease;
-    animation: float 3s infinite ease-in-out;
-    box-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
-}
-.shrimp-img:hover { transform: scale(1.05); }
-.shrimp-img:active { transform: scale(0.95); animation: shrimpGlow 0.5s; }
-.particle-canvas {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    pointer-events: none;
-}
-.point-pop {
-    position: absolute; top: 60px; font-size: 20px; color: #D946EF;
-    animation: pointPop 1s forwards; pointer-events: none;
-}
-.menu-buttons {
-    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-    position: fixed; bottom: 20px; width: 100%;
-}
-.menu-btn {
-    background: #000; color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%; width: 80px; height: 80px; font-size: 12px; cursor: pointer;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-.menu-btn i { font-size: 20px; margin-bottom: 5px; }
-.menu-btn:hover { transform: scale(1.1); background: #1a1a1a; }
-
-/* Ежедневные задания */
 .daily-tasks {
     background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px;
-    margin-bottom: 20px; width: 90%; max-width: 400px; text-align: center;
+    margin: 20px 0; width: 90%; max-width: 400px; text-align: center;
     backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .daily-tasks h3 {
@@ -198,6 +164,48 @@ body {
     display: flex; justify-content: space-between; align-items: center;
 }
 #tasks-list li.completed { background: rgba(0, 221, 235, 0.1); color: #00DDEB; }
+.shrimp-container {
+    display: flex; align-items: center; justify-content: center; position: relative;
+    margin-bottom: 20px; width: 100%;
+}
+.shrimp-img {
+    width: 150px; height: 150px; cursor: pointer; transition: transform 0.2s ease;
+    animation: float 3s infinite ease-in-out;
+    box-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
+}
+.shrimp-img:hover { transform: scale(1.05); }
+.shrimp-img:active { transform: scale(0.95); animation: shrimpGlow 0.5s; }
+.particle-canvas {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    pointer-events: none;
+}
+.point-pop {
+    position: absolute; top: -20px; font-size: 20px; color: #D946EF;
+    animation: pointPop 1s forwards; pointer-events: none;
+}
+.menu-buttons {
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+    position: fixed; bottom: 20px; width: 100%;
+}
+.menu-btn {
+    background: #000; color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%; width: 80px; height: 80px; font-size: 12px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.menu-btn i { font-size: 20px; margin-bottom: 5px; }
+.menu-btn:hover { transform: scale(1.1); background: #1a1a1a; }
+
+/* Кнопка полноэкранного режима */
+.fullscreen-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 1000;
+    background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%; width: 50px; height: 50px; font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+}
+.fullscreen-btn:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.1); }
 
 /* Уведомления */
 .notification {
