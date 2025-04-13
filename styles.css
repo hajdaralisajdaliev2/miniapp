@@ -29,11 +29,11 @@ body {
     border-radius: 50%;
     box-shadow: 50px 50px #fff, 100px 200px #fff, 150px 300px #fff, 200px 400px #fff,
                 250px 100px #fff, 300px 250px #fff, 350px 150px #fff, 400px 350px #fff,
-                450px 50px #fff, 500px 200px #fff;
-    animation: twinkling 5s infinite;
+                450px 50px #fff, 500px 200px #fff, 600px 300px #fff, 700px 100px #fff;
+    animation: twinkling 4s infinite;
 }
 @keyframes twinkling {
-    0%, 100% { opacity: 0.5; }
+    0%, 100% { opacity: 0.4; }
     50% { opacity: 1; }
 }
 
@@ -49,16 +49,16 @@ body {
 }
 @keyframes float {
     0% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-15px); }
     100% { transform: translateY(0); }
 }
 @keyframes pointPop {
-    0% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-50px); }
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-60px) scale(1.5); }
 }
 @keyframes shrimpGlow {
     0% { box-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
-    50% { box-shadow: 0 0 30px rgba(217, 70, 239, 1); }
+    50% { box-shadow: 0 0 40px rgba(217, 70, 239, 1); }
     100% { box-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
 }
 @keyframes notifyFade {
@@ -75,6 +75,18 @@ body {
     from { opacity: 1; max-height: 300px; }
     to { opacity: 0; max-height: 0; }
 }
+@keyframes comboShake {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.2); }
+    50% { transform: scale(0.9); }
+    75% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+@keyframes countUp {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
 .fade-in { animation: fadeIn 0.8s ease-out; }
 .glow-btn:hover { animation: glowPulse 1.5s infinite; }
 .float { animation: float 3s infinite ease-in-out; }
@@ -88,17 +100,17 @@ body {
     min-height: 100vh; text-align: center; padding: 20px;
 }
 #welcome-screen h2 {
-    font-family: 'Orbitron', sans-serif; font-size: 32px; margin-bottom: 30px;
-    color: #00DDEB; text-shadow: 0 0 15px rgba(0, 221, 235, 0.7);
+    font-family: 'Orbitron', sans-serif; font-size: 36px; margin-bottom: 40px;
+    color: #00DDEB; text-shadow: 0 0 20px rgba(0, 221, 235, 0.7); line-height: 1.4;
 }
 #continue-btn {
     background: linear-gradient(45deg, #00DDEB, #D946EF); color: #fff; border: none;
-    padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: 600;
+    padding: 15px 40px; border-radius: 30px; font-size: 18px; font-weight: 700;
     cursor: pointer; transition: all 0.3s ease; text-transform: uppercase;
-    box-shadow: 0 0 15px rgba(0, 221, 235, 0.5);
+    box-shadow: 0 0 20px rgba(0, 221, 235, 0.5); letter-spacing: 1px;
 }
 #continue-btn:hover {
-    background: linear-gradient(45deg, #D946EF, #00DDEB); box-shadow: 0 0 25px rgba(217, 70, 239, 0.8);
+    background: linear-gradient(45deg, #D946EF, #00DDEB); box-shadow: 0 0 30px rgba(217, 70, 239, 0.8);
     transform: scale(1.05);
 }
 
@@ -148,6 +160,8 @@ body {
     font-family: 'Orbitron', sans-serif; font-size: 20px; color: #00DDEB;
     text-shadow: 0 0 10px rgba(0, 221, 235, 0.7);
 }
+.points-display span { transition: all 0.3s ease; }
+.points-display.count-up { animation: countUp 0.5s ease; }
 .expand-btn {
     position: absolute; top: 20px; left: 20px; z-index: 1000;
     background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -157,6 +171,11 @@ body {
 .expand-btn:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.1); }
 .tasks-toggle-btn {
     position: absolute; top: 60px; left: 20px; width: 200px; font-size: 14px; padding: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+#tasks-btn-progress {
+    background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 10px;
+    font-size: 12px; color: #00DDEB;
 }
 .daily-tasks {
     position: absolute; top: 100px; left: 20px;
@@ -183,9 +202,10 @@ body {
     background: rgba(255, 255, 255, 0.05); padding: 8px; margin-bottom: 4px;
     border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 12px;
+    font-size: 12px; transition: all 0.3s ease;
 }
-#tasks-list li.completed { background: rgba(0, 221, 235, 0.1); color: #00DDEB; }
+#tasks-list li.completed { background: rgba(0, 221, 235, 0.2); color: #00DDEB; }
+#tasks-list li:hover { transform: translateX(5px); }
 .shrimp-container {
     display: flex; align-items: center; justify-content: center; position: relative;
     margin-bottom: 20px; width: 100%; flex: 1;
@@ -206,26 +226,35 @@ body {
 .point-pop {
     position: absolute; top: -20px; font-size: 20px; color: #D946EF;
     animation: pointPop 1s forwards; pointer-events: none;
+    font-family: 'Orbitron', sans-serif; font-weight: 700;
 }
+.combo-counter {
+    position: absolute; top: -40px; font-size: 24px; color: #FFD700;
+    font-family: 'Orbitron', sans-serif; font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); display: none;
+}
+.combo-counter.show { display: block; animation: comboShake 0.5s ease; }
 .menu-buttons {
     display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-    position: fixed; bottom: 20px; width: 100%;
+    position: fixed; bottom: 20px; width: 100%; z-index: 10;
 }
 .menu-btn {
-    background: #000; color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%; width: 80px; height: 80px; font-size: 12px; cursor: pointer;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
 }
 .menu-btn i { font-size: 20px; margin-bottom: 5px; }
-.menu-btn:hover { transform: scale(1.1); background: #1a1a1a; }
+.menu-btn:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.1); }
 
 /* Уведомления */
 .notification {
     position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-    background: rgba(0, 221, 235, 0.9); padding: 10px 20px; border-radius: 10px;
+    background: linear-gradient(45deg, #00DDEB, #D946EF); padding: 10px 20px; border-radius: 10px;
     color: #fff; font-size: 14px; display: none; z-index: 1000;
-    box-shadow: 0 0 15px rgba(0, 221, 235, 0.5);
+    box-shadow: 0 0 15px rgba(0, 221, 235, 0.5); font-family: 'Poppins', sans-serif;
+    font-weight: 500; text-align: center;
 }
 .notification.show { display: block; animation: notifyFade 3s forwards; }
 
@@ -328,9 +357,11 @@ body {
     .particle-canvas { width: 120px; height: 120px; }
     .points-display { font-size: 16px; top: 10px; right: 10px; }
     .expand-btn { top: 10px; left: 10px; width: 30px; height: 30px; font-size: 14px; }
+    .back-btn { top: 10px; left: 10px; width: 40px; height: 40px; font-size: 20px; }
     .tasks-toggle-btn { top: 50px; left: 10px; width: 150px; font-size: 12px; padding: 6px; }
     .daily-tasks { top: 90px; left: 10px; width: 200px; padding: 8px; }
     .daily-tasks h3 { font-size: 12px; margin-bottom: 6px; }
     .progress-bar { height: 6px; margin-bottom: 6px; }
     #tasks-list li { padding: 6px; font-size: 10px; margin-bottom: 3px; }
+    #tasks-btn-progress { font-size: 10px; padding: 1px 6px; }
 }
