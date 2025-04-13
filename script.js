@@ -1,12 +1,34 @@
 // Инициализация Telegram Web Apps
 const tg = window.Telegram?.WebApp;
-tg?.ready();
 
-// Автоматическое разворачивание Mini App на полный экран при загрузке
-if (tg) {
-    tg.expand();
-    // Показываем кнопку разворачивания, если мы в Telegram
-    document.getElementById("expand-btn").style.display = "flex";
+// Надёжная инициализация Telegram API
+function initializeTelegram() {
+    return new Promise((resolve) => {
+        if (tg) {
+            tg.ready();
+            setTimeout(() => {
+                tg.expand();
+                document.getElementById("expand-btn").style.display = "flex";
+                resolve(true);
+            }, 500); // Задержка для надёжной инициализации
+        } else {
+            resolve(false);
+        }
+    });
+}
+
+// Попытка входа в полноэкранный режим (альтернатива для браузера)
+function enterFullscreen() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { /* Firefox */
+        elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE/Edge */
+        elem.msRequestFullscreen();
+    }
 }
 
 // Глобальные переменные
@@ -15,8 +37,9 @@ let userData = {
     achievements: [], water: 0, steps: 0, weightHistory: [70],
     dailyCalories: 0, dailyMacros: { protein: 0, fat: 0, carbs: 0 },
     pointsHistory: [], weeklyMenu: [], stats: { calories: [], steps: [], water: [] },
-    tasks: [], tasksCompleted: 0, lastTaskDate: null, combo: 0, lastClickTime: 0
-}
+    tasks: [], tasksCompleted: 0, lastTaskDate: null, combo: 0, lastClickTime: 0,
+    tasksVisible: false // Состояние видимости заданий
+};
 // Список блюд (вставляем массив dishes из предыдущего шага)
 const dishes = [
     {
@@ -1087,10 +1110,28 @@ const dishes = [
 
 
 // Сохранение и загрузка данных
-function saveUserData() { localStorage.setItem("userData", JSON.stringify(userData)); }
+function saveUserData() {
+    localStorage.setItem("userData", JSON.stringify(userData));
+}
+
 function loadUserData() {
     const savedData = localStorage.getItem("userData");
-    if (savedData) userData = JSON.parse(savedData);
+    if (savedData) {
+        userData = JSON.parse(savedData);
+        // Восстанавливаем состояние заданий
+        const tasksDiv = document.getElementById("daily-tasks");
+        const toggleBtn = document.getElementById("toggle-tasks-btn");
+        const tasksBtnText = document.getElementById("tasks-btn-text");
+        if (userData.tasksVisible) {
+            tasksDiv.style.display = "block";
+            tasksDiv.classList.remove("hide");
+            tasksDiv.classList.add("show");
+            tasksBtnText.textContent = "Свернуть задания";
+        } else {
+            tasksDiv.style.display = "none";
+            tasksBtnText.textContent = "Развернуть задания";
+        }
+    }
     checkDailyTasks();
 }
 
@@ -1167,7 +1208,7 @@ function displayWeeklyMenu() {
 function updateStats() {
     const avg = (arr) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : 0;
     document.getElementById("avg-calories").textContent = avg(userData.stats.calories);
-    document.getElementByIdArrows("avg-steps").textContent = avg(userData.stats.steps);
+    document.getElementById("avg-steps").textContent = avg(userData.stats.steps);
     document.getElementById("avg-water").textContent = avg(userData.stats.water);
 }
 
@@ -1209,6 +1250,7 @@ function displayTasks() {
         tasksList.appendChild(li);
     });
     document.getElementById("tasks-progress").textContent = `${userData.tasksCompleted}/3`;
+    document.getElementById("tasks-btn-progress").textContent = `${userData.tasksCompleted}/3`;
     document.getElementById("progress-bar-fill").style.width = `${(userData.tasksCompleted / 3) * 100}%`;
 }
 
@@ -1223,18 +1265,42 @@ function checkTaskCompletion(taskId) {
     if (task.progress >= task.target) {
         task.completed = true;
         userData.tasksCompleted += 1;
-        userData.points += 50;
+        updatePoints(userData.points + 50);
         userData.pointsHistory.push(`+50 баллов за задание: ${task.description} (${new Date().toLocaleString()})`);
         showNotification(`Задание выполнено: ${task.description}! +50 баллов`);
         if (userData.tasksCompleted === 3) {
-            userData.points += 100;
+            updatePoints(userData.points + 100);
             userData.pointsHistory.push(`+100 баллов за выполнение всех заданий дня (${new Date().toLocaleString()})`);
             showNotification("Все задания выполнены! +100 бонусных баллов!");
         }
     }
     saveUserData();
     displayTasks();
-    document.getElementById("points-count").textContent = userData.points;
+}
+
+// Обновление очков с анимацией
+function updatePoints(newPoints) {
+    const pointsElement = document.getElementById("points-count");
+    const pointsDisplay = document.getElementById("points-display");
+    let currentPoints = userData.points;
+    userData.points = newPoints;
+    const increment = (newPoints - currentPoints) / 20;
+
+    function animatePoints() {
+        if (Math.abs(currentPoints - newPoints) < 1) {
+            currentPoints = newPoints;
+            pointsElement.textContent = Math.round(currentPoints);
+            pointsDisplay.classList.add("count-up");
+            return;
+        }
+        currentPoints += increment;
+        pointsElement.textContent = Math.round(currentPoints);
+        pointsDisplay.classList.add("count-up");
+        requestAnimationFrame(animatePoints);
+    }
+
+    animatePoints();
+    saveUserData();
 }
 
 // Уведомления
@@ -1256,18 +1322,20 @@ class Particle {
     constructor() {
         this.x = canvas.width / 2;
         this.y = canvas.height / 2;
-        this.size = Math.random() * 5 + 1;
-        this.speedX = Math.random() * 3 - 1.5;
-        this.speedY = Math.random() * 3 - 1.5;
-        this.life = 50;
+        this.size = Math.random() * 5 + 2;
+        this.speedX = Math.random() * 4 - 2;
+        this.speedY = Math.random() * 4 - 2;
+        this.life = 60;
+        this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
     }
     update() {
         this.x += this.speedX;
         this.y += this.speedY;
         this.life--;
+        this.size *= 0.95;
     }
     draw() {
-        ctx.fillStyle = "rgba(217, 70, 239, 0.8)";
+        ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -1278,7 +1346,7 @@ function handleParticles() {
     for (let i = 0; i < particlesArray.length; i++) {
         particlesArray[i].update();
         particlesArray[i].draw();
-        if (particlesArray[i].life <= 0) {
+        if (particlesArray[i].life <= 0 || particlesArray[i].size <= 0.1) {
             particlesArray.splice(i, 1);
             i--;
         }
@@ -1434,6 +1502,7 @@ document.getElementById("continue-btn").addEventListener("click", () => {
     }
 });
 
+document.getElementById("back-to-welcome-btn").addEventListener("click", showWelcomeScreen);
 document.getElementById("back-btn-points").addEventListener("click", showMainMenu);
 document.getElementById("back-btn-profile").addEventListener("click", showMainMenu);
 document.getElementById("back-btn-weekly").addEventListener("click", showMainMenu);
@@ -1447,7 +1516,7 @@ document.getElementById("stats-btn").addEventListener("click", showStatsTab);
 
 document.getElementById("add-water-btn").addEventListener("click", () => {
     userData.water += 200;
-    userData.points += 10;
+    updatePoints(userData.points + 10);
     userData.pointsHistory.push(`+10 баллов за 200 мл воды (${new Date().toLocaleString()})`);
     userData.stats.water.push(userData.water);
     document.getElementById("water-intake").textContent = userData.water;
@@ -1457,7 +1526,7 @@ document.getElementById("add-water-btn").addEventListener("click", () => {
 
 document.getElementById("add-steps-btn").addEventListener("click", () => {
     userData.steps += 1000;
-    userData.points += 20;
+    updatePoints(userData.points + 20);
     userData.pointsHistory.push(`+20 баллов за 1000 шагов (${new Date().toLocaleString()})`);
     userData.stats.steps.push(userData.steps);
     document.getElementById("steps-count").textContent = userData.steps;
@@ -1515,24 +1584,31 @@ document.getElementById("shrimp").addEventListener("click", () => {
 
     // Комбо-клики
     const currentTime = Date.now();
+    const comboCounter = document.getElementById("combo-counter");
     if (currentTime - userData.lastClickTime < 500) {
         userData.combo += 1;
+        comboCounter.textContent = `x${userData.combo}`;
+        comboCounter.classList.remove("show");
+        comboCounter.classList.add("show");
         if (userData.combo >= 5) {
             const bonusPoints = userData.combo * 2;
-            userData.points += bonusPoints;
+            updatePoints(userData.points + bonusPoints);
             userData.pointsHistory.push(`+${bonusPoints} баллов за комбо-клик x${userData.combo} (${new Date().toLocaleString()})`);
             showNotification(`Комбо x${userData.combo}! +${bonusPoints} баллов!`);
             userData.combo = 0;
+            comboCounter.textContent = "";
         }
     } else {
-        userData.combo = 0;
+        userData.combo = 1;
+        comboCounter.textContent = `x${userData.combo}`;
+        comboCounter.classList.remove("show");
+        comboCounter.classList.add("show");
     }
     userData.lastClickTime = currentTime;
 
     // Очки
-    userData.points += 1;
+    updatePoints(userData.points + 1);
     userData.pointsHistory.push(`+1 балл за клик по креветке (${new Date().toLocaleString()})`);
-    document.getElementById("points-count").textContent = userData.points;
     saveUserData();
 
     // Анимация "+1"
@@ -1543,7 +1619,7 @@ document.getElementById("shrimp").addEventListener("click", () => {
     setTimeout(() => pointPop.remove(), 1000);
 
     // Частицы
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 8; i++) {
         particlesArray.push(new Particle());
     }
 });
@@ -1552,6 +1628,8 @@ document.getElementById("shrimp").addEventListener("click", () => {
 document.getElementById("expand-btn").addEventListener("click", () => {
     if (tg) {
         tg.expand();
+    } else {
+        enterFullscreen();
     }
 });
 
@@ -1559,23 +1637,32 @@ document.getElementById("expand-btn").addEventListener("click", () => {
 document.getElementById("toggle-tasks-btn").addEventListener("click", () => {
     const tasksDiv = document.getElementById("daily-tasks");
     const toggleBtn = document.getElementById("toggle-tasks-btn");
+    const tasksBtnText = document.getElementById("tasks-btn-text");
     if (tasksDiv.style.display === "none" || tasksDiv.style.display === "") {
         tasksDiv.style.display = "block";
         tasksDiv.classList.remove("hide");
         tasksDiv.classList.add("show");
-        toggleBtn.textContent = "Свернуть задания";
+        tasksBtnText.textContent = "Свернуть задания";
+        userData.tasksVisible = true;
     } else {
         tasksDiv.classList.remove("show");
         tasksDiv.classList.add("hide");
-        toggleBtn.textContent = "Развернуть задания";
+        tasksBtnText.textContent = "Развернуть задания";
+        userData.tasksVisible = false;
         setTimeout(() => {
             tasksDiv.style.display = "none";
         }, 500); // Соответствует длительности анимации
     }
+    saveUserData();
 });
 
 // Инициализация
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     loadUserData();
+    const isTelegram = await initializeTelegram();
+    if (!isTelegram) {
+        // Если не Telegram, показываем кнопку для полноэкранного режима в браузере
+        document.getElementById("expand-btn").style.display = "flex";
+    }
     showWelcomeScreen();
 });
