@@ -53,16 +53,16 @@
         <!-- Главное меню -->
         <div id="main-menu" class="fade-in">
             <div id="points-display" class="points-display">Счёт: <span id="points-count">0</span></div>
-            <div class="shrimp-container">
-                <img id="shrimp" class="shrimp-img" src="https://via.placeholder.com/150x150.png?text=Креветка" alt="Креветка">
-                <canvas id="particle-canvas" class="particle-canvas"></canvas>
-            </div>
             <div id="daily-tasks" class="daily-tasks">
                 <h3>Ежедневные задания <span id="tasks-progress">0/3</span></h3>
                 <div class="progress-bar">
                     <div id="progress-bar-fill" class="progress-bar-fill"></div>
                 </div>
                 <ul id="tasks-list"></ul>
+            </div>
+            <div class="shrimp-container">
+                <img id="shrimp" class="shrimp-img" src="https://via.placeholder.com/150x150.png?text=Креветка" alt="Креветка">
+                <canvas id="particle-canvas" class="particle-canvas"></canvas>
             </div>
             <div class="menu-buttons">
                 <button id="profile-btn" class="menu-btn glow-btn"><i class="fas fa-user"></i> Профиль</button>
@@ -71,6 +71,7 @@
                 <button id="settings-btn" class="menu-btn glow-btn"><i class="fas fa-cog"></i> Настройки</button>
                 <button id="stats-btn" class="menu-btn glow-btn"><i class="fas fa-chart-bar"></i> Статистика</button>
             </div>
+            <button id="fullscreen-btn" class="fullscreen-btn glow-btn"><i class="fas fa-expand"></i></button>
         </div>
 
         <!-- Баллы -->
