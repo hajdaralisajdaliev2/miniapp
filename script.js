@@ -2,6 +2,11 @@
 const tg = window.Telegram?.WebApp;
 tg?.ready();
 
+// Автоматическое разворачивание Mini App на полный экран
+if (tg) {
+    tg.expand();
+}
+
 // Глобальные переменные
 let userData = {
     height: 0, weight: 0, goal: '', allergies: [], points: 0,
@@ -1079,7 +1084,6 @@ const dishes = [
 ];
 
 
-
 // Сохранение и загрузка данных
 function saveUserData() { localStorage.setItem("userData", JSON.stringify(userData)); }
 function loadUserData() {
@@ -1515,7 +1519,7 @@ document.getElementById("shrimp").addEventListener("click", () => {
             const bonusPoints = userData.combo * 2;
             userData.points += bonusPoints;
             userData.pointsHistory.push(`+${bonusPoints} баллов за комбо-клик x${userData.combo} (${new Date().toLocaleString()})`);
-            showNotification(`Комбо x${userIData.combo}! +${bonusPoints} баллов!`);
+            showNotification(`Комбо x${userData.combo}! +${bonusPoints} баллов!`);
             userData.combo = 0;
         }
     } else {
@@ -1542,27 +1546,22 @@ document.getElementById("shrimp").addEventListener("click", () => {
     }
 });
 
-// Полноэкранный режим
-document.getElementById("fullscreen-btn").addEventListener("click", () => {
-    const fullscreenBtn = document.getElementById("fullscreen-btn");
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-            console.error(`Ошибка при попытке включить полноэкранный режим: ${err.message}`);
-        });
-        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+// Кнопка "Развернуть" для заданий
+document.getElementById("toggle-tasks-btn").addEventListener("click", () => {
+    const tasksDiv = document.getElementById("daily-tasks");
+    const toggleBtn = document.getElementById("toggle-tasks-btn");
+    if (tasksDiv.style.display === "none" || tasksDiv.style.display === "") {
+        tasksDiv.style.display = "block";
+        tasksDiv.classList.remove("hide");
+        tasksDiv.classList.add("show");
+        toggleBtn.textContent = "Свернуть задания";
     } else {
-        document.exitFullscreen();
-        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-    }
-});
-
-// Обработчик изменения состояния полноэкранного режима
-document.addEventListener("fullscreenchange", () => {
-    const fullscreenBtn = document.getElementById("fullscreen-btn");
-    if (!document.fullscreenElement) {
-        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-    } else {
-        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+        tasksDiv.classList.remove("show");
+        tasksDiv.classList.add("hide");
+        toggleBtn.textContent = "Развернуть задания";
+        setTimeout(() => {
+            tasksDiv.style.display = "none";
+        }, 500); // Соответствует длительности анимации
     }
 });
 
