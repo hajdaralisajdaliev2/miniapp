@@ -7,8 +7,12 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <!-- Фон со звёздами -->
+    <div class="stars-background"></div>
+
     <!-- Приветственный экран -->
     <div id="welcome-screen" class="fade-in">
         <h2>Добро пожаловать в ваше космическое путешествие к здоровью! 🚀</h2>
@@ -50,14 +54,22 @@
         <div id="main-menu" class="fade-in">
             <div id="points-display" class="points-display">Счёт: <span id="points-count">0</span></div>
             <div class="shrimp-container">
-                <img id="shrimp" class="shrimp-img" src="https://yandex.ru/images/search?p=3&text=креветка+пнг&pos=3&rpt=simage&img_url=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fcb%2Fd2%2F37%2Fcbd2371a90728e754c2f34517a408445.jpg&from=tabbar&lr=10743">
+                <img id="shrimp" class="shrimp-img" src="https://via.placeholder.com/150x150.png?text=Креветка" alt="Креветка">
+                <canvas id="particle-canvas" class="particle-canvas"></canvas>
+            </div>
+            <div id="daily-tasks" class="daily-tasks">
+                <h3>Ежедневные задания <span id="tasks-progress">0/3</span></h3>
+                <div class="progress-bar">
+                    <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                </div>
+                <ul id="tasks-list"></ul>
             </div>
             <div class="menu-buttons">
-                <button id="profile-btn" class="menu-btn glow-btn">Профиль</button>
-                <button id="points-btn" class="menu-btn glow-btn">Баллы</button>
-                <button id="weekly-menu-btn" class="menu-btn glow-btn">Рацион</button>
-                <button id="settings-btn" class="menu-btn glow-btn">Настройки</button>
-                <button id="stats-btn" class="menu-btn glow-btn">Статистика</button>
+                <button id="profile-btn" class="menu-btn glow-btn"><i class="fas fa-user"></i> Профиль</button>
+                <button id="points-btn" class="menu-btn glow-btn"><i class="fas fa-star"></i> Баллы</button>
+                <button id="weekly-menu-btn" class="menu-btn glow-btn"><i class="fas fa-utensils"></i> Рацион</button>
+                <button id="settings-btn" class="menu-btn glow-btn"><i class="fas fa-cog"></i> Настройки</button>
+                <button id="stats-btn" class="menu-btn glow-btn"><i class="fas fa-chart-bar"></i> Статистика</button>
             </div>
         </div>
 
@@ -132,7 +144,13 @@
             <p>Средние шаги за неделю: <span id="avg-steps">0</span> шагов</p>
             <p>Средняя вода за неделю: <span id="avg-water">0</span> мл</p>
         </div>
+
+        <!-- Всплывающие уведомления -->
+        <div id="notification" class="notification"></div>
     </div>
+
+    <!-- Звуковой эффект -->
+    <audio id="click-sound" src="https://www.myinstants.com/media/sounds/click.mp3"></audio>
 
     <script src="script.js"></script>
 </body>
