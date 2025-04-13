@@ -6,6 +6,35 @@ body {
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden;
     min-height: 100vh;
+    position: relative;
+}
+
+/* Звёздный фон */
+.stars-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: -1;
+    pointer-events: none;
+}
+.stars-background::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 50px 50px #fff, 100px 200px #fff, 150px 300px #fff, 200px 400px #fff,
+                250px 100px #fff, 300px 250px #fff, 350px 150px #fff, 400px 350px #fff,
+                450px 50px #fff, 500px 200px #fff;
+    animation: twinkling 5s infinite;
+}
+@keyframes twinkling {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
 }
 
 /* Анимации */
@@ -31,6 +60,12 @@ body {
     0% { box-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
     50% { box-shadow: 0 0 30px rgba(217, 70, 239, 1); }
     100% { box-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
+}
+@keyframes notifyFade {
+    0% { opacity: 0; transform: translateY(20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(20px); }
 }
 .fade-in { animation: fadeIn 0.8s ease-out; }
 .glow-btn:hover { animation: glowPulse 1.5s infinite; }
@@ -106,7 +141,7 @@ body {
     text-shadow: 0 0 10px rgba(0, 221, 235, 0.7);
 }
 .shrimp-container {
-    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex: 1; display: flex; align-items: center; justify-content: center; position: relative;
 }
 .shrimp-img {
     width: 150px; height: 150px; cursor: pointer; transition: transform 0.2s ease;
@@ -115,6 +150,12 @@ body {
 }
 .shrimp-img:hover { transform: scale(1.05); }
 .shrimp-img:active { transform: scale(0.95); animation: shrimpGlow 0.5s; }
+.particle-canvas {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    pointer-events: none;
+}
 .point-pop {
     position: absolute; top: 60px; font-size: 20px; color: #D946EF;
     animation: pointPop 1s forwards; pointer-events: none;
@@ -125,11 +166,47 @@ body {
 }
 .menu-btn {
     background: #000; color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%; width: 80px; height: 80px; font-size: 14px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; text-align: center;
-    transition: all 0.3s ease; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 50%; width: 80px; height: 80px; font-size: 12px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
+.menu-btn i { font-size: 20px; margin-bottom: 5px; }
 .menu-btn:hover { transform: scale(1.1); background: #1a1a1a; }
+
+/* Ежедневные задания */
+.daily-tasks {
+    background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px;
+    margin-bottom: 20px; width: 90%; max-width: 400px; text-align: center;
+    backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.daily-tasks h3 {
+    font-family: 'Orbitron', sans-serif; color: #00DDEB; margin-bottom: 10px;
+    text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
+}
+.progress-bar {
+    background: rgba(255, 255, 255, 0.1); border-radius: 5px; height: 10px;
+    margin-bottom: 10px; overflow: hidden;
+}
+.progress-bar-fill {
+    background: linear-gradient(45deg, #00DDEB, #D946EF); height: 100%;
+    width: 0%; transition: width 0.5s ease;
+}
+#tasks-list { list-style: none; }
+#tasks-list li {
+    background: rgba(255, 255, 255, 0.05); padding: 10px; margin-bottom: 5px;
+    border-radius: 5px; border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex; justify-content: space-between; align-items: center;
+}
+#tasks-list li.completed { background: rgba(0, 221, 235, 0.1); color: #00DDEB; }
+
+/* Уведомления */
+.notification {
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: rgba(0, 221, 235, 0.9); padding: 10px 20px; border-radius: 10px;
+    color: #fff; font-size: 14px; display: none; z-index: 1000;
+    box-shadow: 0 0 15px rgba(0, 221, 235, 0.5);
+}
+.notification.show { display: block; animation: notifyFade 3s forwards; }
 
 /* Кнопка возврата */
 .back-btn {
@@ -222,9 +299,12 @@ body {
 @media (max-width: 600px) {
     #app { padding: 10px; }
     .menu-buttons { gap: 10px; bottom: 10px; }
-    .menu-btn { width: 60px; height: 60px; font-size: 12px; }
+    .menu-btn { width: 60px; height: 60px; font-size: 10px; }
+    .menu-btn i { font-size: 16px; }
     .dish-card { flex-direction: column; align-items: flex-start; }
     .dish-card img { width: 100%; height: 120px; margin-right: 0; margin-bottom: 10px; }
     .shrimp-img { width: 120px; height: 120px; }
+    .particle-canvas { width: 120px; height: 120px; }
     .points-display { font-size: 20px; }
+    .daily-tasks { width: 100%; }
 }
