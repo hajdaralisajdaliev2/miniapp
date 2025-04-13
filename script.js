@@ -1515,7 +1515,7 @@ document.getElementById("shrimp").addEventListener("click", () => {
             const bonusPoints = userData.combo * 2;
             userData.points += bonusPoints;
             userData.pointsHistory.push(`+${bonusPoints} баллов за комбо-клик x${userData.combo} (${new Date().toLocaleString()})`);
-            showNotification(`Комбо x${userData.combo}! +${bonusPoints} баллов!`);
+            showNotification(`Комбо x${userIData.combo}! +${bonusPoints} баллов!`);
             userData.combo = 0;
         }
     } else {
@@ -1533,12 +1533,36 @@ document.getElementById("shrimp").addEventListener("click", () => {
     const pointPop = document.createElement("div");
     pointPop.className = "point-pop";
     pointPop.textContent = "+1";
-    document.getElementById("main-menu").appendChild(pointPop);
+    document.getElementById("shrimp-container").appendChild(pointPop);
     setTimeout(() => pointPop.remove(), 1000);
 
     // Частицы
     for (let i = 0; i < 5; i++) {
         particlesArray.push(new Particle());
+    }
+});
+
+// Полноэкранный режим
+document.getElementById("fullscreen-btn").addEventListener("click", () => {
+    const fullscreenBtn = document.getElementById("fullscreen-btn");
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.error(`Ошибка при попытке включить полноэкранный режим: ${err.message}`);
+        });
+        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+    } else {
+        document.exitFullscreen();
+        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+    }
+});
+
+// Обработчик изменения состояния полноэкранного режима
+document.addEventListener("fullscreenchange", () => {
+    const fullscreenBtn = document.getElementById("fullscreen-btn");
+    if (!document.fullscreenElement) {
+        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+    } else {
+        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
     }
 });
 
